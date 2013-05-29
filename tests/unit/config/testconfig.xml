@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Example config which should be parsed OK -->
+<Config>
+
+<Section1>
+    <Name>Bunker</Name>
+    <Location><![CDATA[Jurrasic Park, Sorna isl.]]></Location>
+    <LocationRU><![CDATA[Парк Юрского Периода, ост. Сорна]]></LocationRU>
+    <ObjectA>no</ObjectA>
+    <ObjectB>true</ObjectB>
+</Section1>
+
+<Section2>
+    <price>3.80</price>
+    <coord_x>10</coord_x>
+    <coord_y>-10</coord_y>
+</Section2>
+
+<sudo_reboot><command>reboot</command></sudo_reboot>
+<sudo_shutdown><command>shutdown</command></sudo_shutdown>
+<sudo_date><command>date</command></sudo_date>
+
+</Config>

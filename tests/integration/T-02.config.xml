@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+
+<QueryQualifier>
+    <IndexFile>phrases.idx</IndexFile>
+    <OptimizeIndex>yes</OptimizeIndex>
+    <Enabled>yes</Enabled>
+    <MMaped>yes</MMaped>
+    <SaveOrigins>yes</SaveOrigins>
+</QueryQualifier>
+
+<QueryClass_news>
+    <PhrasesFile>../../../data/phrases_proj/news.txt</PhrasesFile>
+</QueryClass_news>
+
+<QueryClass_streets>
+    <PhrasesFile>../phrases/streets.qc</PhrasesFile>
+</QueryClass_streets>
+
+</Config>

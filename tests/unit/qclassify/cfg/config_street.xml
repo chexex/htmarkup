@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+
+<QueryQualifier>
+    <IndexFile>idx/streets.idx</IndexFile>
+    <!--    <OptimizeIndex>no</OptimizeIndex> -->
+    <Enabled>yes</Enabled>
+    <SaveOrigins>yes</SaveOrigins>
+</QueryQualifier>
+
+
+<QueryClass_street>
+    <ReorderingPenalty>0.5</ReorderingPenalty>
+    <PhrasesFile>phrases/streets.qc</PhrasesFile>
+</QueryClass_street>
+
+</Config>

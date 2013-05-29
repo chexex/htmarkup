@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+
+<QueryQualifier>
+    <IndexFile>idx/simple.idx</IndexFile>
+    <SaveOrigins>yes</SaveOrigins>
+</QueryQualifier>
+
+<QueryClass_events>
+    <PartialPenalty>1</PartialPenalty>
+    <ReorderingPenalty>1</ReorderingPenalty>
+    <PhrasesFile>phrases/events.qc</PhrasesFile>
+</QueryClass_events>
+
+</Config>

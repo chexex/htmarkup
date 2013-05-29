@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+
+<QueryQualifier>
+    <IndexFile>phrases.idx</IndexFile>
+    <OptimizeIndex>yes</OptimizeIndex>
+    <Enabled>yes</Enabled>
+    <SaveOrigins>yes</SaveOrigins>
+</QueryQualifier>
+
+<QueryClass_streets>
+    <PhrasesFile>streets.qc</PhrasesFile>
+</QueryClass_streets>
+
+</Config>

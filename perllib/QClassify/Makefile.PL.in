@@ -1,0 +1,28 @@
+use 5.008000;
+use ExtUtils::MakeMaker;
+
+# use c++ compiler since provide OO-iface
+my $CC="@CXX@";
+my $BUILDROOT='../../';
+
+# See lib/ExtUtils/MakeMaker.pm for details of how to influence
+# the contents of the Makefile that is written.
+WriteMakefile(
+    NAME              => 'QClassify',
+    VERSION_FROM      => 'lib/QClassify.pm', # finds $VERSION
+    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
+    ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
+      (ABSTRACT_FROM  => 'lib/QClassify.pm', # retrieve abstract from module
+       AUTHOR         => 'KISEL Jan <kisel@corp.mail.ru>') : ()),
+    LIBS              => [ "@LEMMATIZER_LIBS@ -L../../libs/qclassify/.libs -lqclassify -lexpat @ICU_LIBS@ @PCRE_LIBS@" ],
+    DEFINE            => '-Wno-write-strings',
+    CC                => "$CC",
+    LD                => "$CC",
+
+    INC               => "-I. -I$BUILDROOT/libs @LEMMATIZER_INCLUDES@ @PCRE_CFLAGS@",
+	# Un-comment this if you add C files to link with later:
+    # OBJECT            => '$(O_FILES)', # link all the C files too
+    XSOPT             => '-C++',
+    TYPEMAPS          => [ 'perlobject.map' ],
+    USE_MM_LD_RUN_PATH => 1
+);

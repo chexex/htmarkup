@@ -1,0 +1,3 @@
+TYPEMAP
+QClassifyAgent * O_OBJECT
+PhraseSearcher * O_OBJECT

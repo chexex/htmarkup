@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+
+<QueryQualifier>
+    <IndexFile>idx/marker_cfg.idx</IndexFile>
+    <SaveOrigins>yes</SaveOrigins>
+</QueryQualifier>
+
+<HtmlMarker>
+    <SkipFirstWord>yes</SkipFirstWord> <!-- Пропускать первое слово в предложении -->
+    <MaxPhraseSize>4</MaxPhraseSize> <!-- Максимальная длинна фразы (в словах) для разметки -->
+    <Gap>0</Gap>     <!-- Минимальное расстояние между помечаемымми фразами (в словах) -->
+    <Uniq>yes</Uniq> <!-- Не отмечать одну фразу дважды -->
+    <Limit>3</Limit> <!-- Отмечать не более 3х фраз -->
+    <!--Приоритет (порядок) разметки фраз, в данном случае - первыми размечать фразы с большим рангом -->
+    <SortOrder>R</SortOrder>
+</HtmlMarker>
+
+<QueryClass_events>
+    <PartialPenalty>1</PartialPenalty>
+    <ReorderingPenalty>1</ReorderingPenalty>
+    <Marker><![CDATA[<a href="http://www.wikipedia.org/%O">%P</a>]]></Marker>
+    <PhrasesFile>phrases/events.qc</PhrasesFile>
+</QueryClass_events>
+
+<QueryClass_linux>
+    <PartialPenalty>1</PartialPenalty>
+    <ReorderingPenalty>1</ReorderingPenalty>
+    <Marker><![CDATA[<a href="http://www.%U">%P</a>]]></Marker>
+    <PhrasesFile>phrases/linux.qc</PhrasesFile>
+</QueryClass_linux>
+
+<QueryClass_coffee>
+    <PartialPenalty>1</PartialPenalty>
+    <ReorderingPenalty>1</ReorderingPenalty>
+    <UseUdataAsFormat>no</UseUdataAsFormat>
+    <Marker><![CDATA[<a href="http://www.starbucks.com/%U" title="%O">%P</a>]]></Marker>
+    <PhrasesFile>phrases/coffee.qc</PhrasesFile>
+</QueryClass_coffee>
+
+<QueryClass_city>
+    <PartialPenalty>1</PartialPenalty>
+    <ReorderingPenalty>1</ReorderingPenalty>
+    <Marker><![CDATA[<a class="gomail_search" name="cln5173" target="_blank" href="http://map.mail.ru/?fullscreen=true&q=%M">%P</a>&nbsp;<img src="http://img.mail.ru/r/search_icon.gif"  width="13" height="13" alt="" />]]></Marker>
+    <PhrasesFile>phrases/city.qc</PhrasesFile>
+</QueryClass_city>
+
+<QueryClass_trash>
+    <PartialPenalty>1</PartialPenalty>
+    <PhrasesFile>phrases/trash.qc</PhrasesFile>
+</QueryClass_trash>
+
+</Config>

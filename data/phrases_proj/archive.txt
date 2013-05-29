@@ -1,0 +1,141 @@
+концерт //100%;http://afisha.mail.ru/schedule.html?placetype=3
+афиша //100%;http://afisha.mail.ru/places.html?placetype=1
+киноафиша //100%;http://afisha.mail.ru/places.html?placetype=1
+кинотеатр //100%;http://afisha.mail.ru/places.html?placetype=1
+кино //100%;http://afisha.mail.ru/places.html?placetype=1
+кафе //100%;http://afisha.mail.ru/restaurants.html
+ресторан //100%;http://afisha.mail.ru/restaurants.html
+театр //100%;http://afisha.mail.ru/places.html?placetype=5
+театральный //100%;http://afisha.mail.ru/places.html?placetype=5
+cпектакль //100%;http://afisha.mail.ru/schedule.html?placetype=5
+клуб //100%;http://afisha.mail.ru/events.html?placetype=2
+выставка //100%;http://afisha.mail.ru/events.html?placetype=4
+программа передач //100%;http://tv.mail.ru
+программа телепередач //100%;http://tv.mail.ru
+телепрограмма //100%;http://tv.mail.ru
+автомобиль //100%;http://auto.mail.ru
+авто   //100%;http://auto.mail.ru
+машина //100%;http://auto.mail.ru
+auto //100%;http://auto.mail.ru
+форд //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=51
+тойота //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=157
+ниссан //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=115
+продажа автомобилей //100%;http://auto.mail.ru/market/
+хонда //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=62
+опель //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=117
+шевроле //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=31
+мазда //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=98
+пежо //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=123
+авторынок //100%;http://auto.mail.ru/market/
+тачка //100%;http://auto.mail.ru
+avto //100%;http://auto.mail.ru
+тюнинг //100%;http://auto.mail.ru/galleries.html
+покупка авто //100%;http://auto.mail.ru/market/
+продам авто //100%;http://auto.mail.ru/market/
+новые авто //100%;http://auto.mail.ru/market/index.html?type=new
+фото авто //100%;http://auto.mail.ru/galleries.html
+японские авто //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=157
+авто рынок //100%;http://auto.mail.ru/market/
+покупка машин //100%;http://auto.mail.ru/market/
+alfa romeo //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=3
+audi //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=9
+bmw //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=20
+cadillac //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=26
+chery //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=30
+chevrolet //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=31
+chrysler //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=32
+citroen //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=33
+daewoo //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=37
+dodge //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=45
+fiat //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=50
+ford //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=51
+honda //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=62
+hummer //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=63
+hyundai //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=65
+infiniti //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=68
+jeep //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=77
+kia //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=80
+land rover //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=85
+lexus //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=87
+mazda //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=98
+mini //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=108
+mitsubishi //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=110
+nissan //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=115
+opel //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=117
+peugeot //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=123
+porsche //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=126
+renault //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=133
+saab //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=137
+seat //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=142
+skoda //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=144
+ssangyong //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=148
+subaru //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=149
+suzuki //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=150
+toyota //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=157
+volkswagen //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=169
+volvo //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=170
+ваз //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=164
+уаз //100%;http://auto.mail.ru/catalogue/firm.html?firm_id=161
+фото //100%;http://foto.mail.ru
+фотографии //100%;http://foto.mail.ru
+фото девушек //100%;http://foto.mail.ru/tags/%e4%e5%e2%f3%f8%ea%e8
+фотки //100%;http://foto.mail.ru
+фото женщин //100%;http://foto.mail.ru/tags/%e4%e5%e2%f3%f8%ea%e8
+пейзаж //100%;http://foto.mail.ru/themes/nature
+фотографии девушек //100%;http://foto.mail.ru/tags/%e4%e5%e2%f3%f8%ea%e8
+фото людей //100%;http://foto.mail.ru/themes/portrait
+красивые фотографии //100%;http://foto.mail.ru/tags/%ea%f0%e0%f1%e8%e2%fb%e5
+фотографии городов //100%;http://foto.mail.ru/themes/city
+цифровая фотография //100%;http://foto.mail.ru
+фотографии знаменитостей //100%;http://foto.mail.ru/themes/star
+фото знаменитостей //100%;http://foto.mail.ru/themes/star
+одноклассники //100%;http://my.mail.ru
+поиск людей //100%;http://my.mail.ru/cgi-bin/my/search?search=1&typeBare=1&query=
+найти человека //100%;http://my.mail.ru/cgi-bin/my/search?search=1&typeBare=1&query=
+однаклассники //100%;http://my.mail.ru
+однакласники //100%;http://my.mail.ru
+поиск одноклассников //100%;http://my.mail.ru/cgi-bin/my/search?search=1&typeBare=1&query=
+сослуживцы //100%;http://my.mail.ru
+компьютерные игры //100%;http://progames.mail.ru
+игры на PC //100%;http://progames.mail.ru/game
+Xbox //100%;http://progames.mail.ru/game
+Playstation //100%;http://progames.mail.ru/game
+обзоры игр //100%;http://progames.mail.ru/document/review
+прохождения игр //100%;http://progames.mail.ru/document/review
+скриншоты игры //100%;http://progames.mail.ru/gallery
+демо-версия игры //100%;http://progames.mail.ru/media/demo
+дата выхода игры //100%;http://progames.mail.ru/document/news
+системные требования игры //100%;http://progames.mail.ru/document/news
+патч к игре //100%;http://progames.mail.ru/media/patch
+Sims //100%;http://progames.mail.ru/document/1668/view
+GTA //100%;http://progames.mail.ru/game/479/view
+Assassin's Creed //100%;http://progames.mail.ru/game/980/view
+Mass Effect //100%;http://progames.mail.ru/document/1691/view
+Prototype //100%;http://progames.mail.ru/document/1720/view
+Bioshock //100%;http://progames.mail.ru/document/1819/view
+Modern Warfare //100%;http://progames.mail.ru/game/602/view
+работа //100%;http://rabota.mail.ru
+вакансии //100%;http://rabota.mail.ru/vac_search/
+резюме //100%;http://rabota.mail.ru/resume_search/
+работа в петербурге //100%;http://rabota.mail.ru/vacancy_catalog/spb/
+работа в москве //100%;http://rabota.mail.ru/vacancy_catalog/msk/
+ищу работу //100%;http://rabota.mail.ru
+поиск работы //100%;http://rabota.mail.ru
+работа водителем //100%;http://rabota.mail.ru/vac_search/msk/trans/driver1/
+образец резюме //100%;http://rabota.mail.ru/cmp/edit_resume/
+трудоустройство //100%;http://rabota.mail.ru
+подработка //100%;http://rabota.mail.ru
+подбор персонала //100%;http://rabota.mail.ru/resume_search/
+работа курьером //100%;http://rabota.mail.ru/vac_search/msk/serv/courier/
+ночная работа //100%;http://rabota.mail.ru
+сайт поиска работы //100%;http://rabota.mail.ru
+работа по совместительству //100%;http://rabota.mail.ru
+вакансии в банках //100%;http://rabota.mail.ru/vacancy_catalog/msk/bank/
+как написать резюме //100%;http://rabota.mail.ru/cmp/edit_resume/
+вакансия курьер //100%;http://rabota.mail.ru/vac_search/msk/serv/courier/
+форма резюме //100%;http://rabota.mail.ru/cmp/edit_resume/
+работа для студентов //100%;http://rabota.mail.ru/season/
+работа в москве //100%;http://rabota.mail.ru/vacancy_catalog/msk/
+вакансии для студентов //100%;http://rabota.mail.ru/season/
+работа для школьников //100%;http://rabota.mail.ru/season/
+вакансии для школьников //100%;http://rabota.mail.ru/season/

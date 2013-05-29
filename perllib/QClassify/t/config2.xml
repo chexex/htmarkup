@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+
+<QueryQualifier>
+    <IndexFile>t/os.idx</IndexFile>
+    <MLocked>no</MLocked>
+    <Enabled>yes</Enabled>
+    <SaveOrigins>yes</SaveOrigins>
+</QueryQualifier>
+
+<HtmlMarker>
+  <Gap>2</Gap>
+  <Uniq>yes</Uniq>
+  <Limit>3</Limit>
+</HtmlMarker>
+
+<QueryClass_os>
+    <ReorderingPenalty>0.5</ReorderingPenalty>
+    <PartialPenalty>1.0</PartialPenalty>
+    <PhrasesFile>t/phrases/os.qc</PhrasesFile>
+    <Marker><![CDATA[<b>%P (%U)</b>]]></Marker>
+</QueryClass_os>
+
+</Config>
+

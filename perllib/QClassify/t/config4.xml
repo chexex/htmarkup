@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+
+<QueryQualifier>
+    <IndexFile>t/phrases.idx</IndexFile>
+    <MLocked>no</MLocked>
+    <Enabled>yes</Enabled>
+    <SaveOrigins>yes</SaveOrigins>
+</QueryQualifier>
+
+<HtmlMarker>
+	<SkipFirstWord>no</SkipFirstWord> <!-- Пропускать первое слово в предложении -->
+	<MaxPhraseSize>4</MaxPhraseSize> <!-- Максимальная длинна фразы (в словах) для разметки -->
+	<Gap>2</Gap>    <!-- Минимальное расстояние между фразами (в словах) -->
+	<Uniq>no</Uniq> <!-- Отмечать фразу лишь один раз -->
+	<Limit>10</Limit> <!-- Отмечать не более N фраз -->
+	<!-- SortOrder:
+	  Упорядочить фразы перед разметкой:
+		- r: ранк, по-возрастанию
+		- R: ранк, по-убыванию
+		- f: частота, по-возрастанию
+		- F: частота, по-убыванию
+		- n: no-sort, режим по-умолчанию:
+			размечаются наибольшие по размеру фразы в порядке их расстановки в тексте
+	  (очевидно, что это имеет смысл лишь при ограничении кол-ва фраз на разметку)
+	-->
+	<SortOrder>R</SortOrder>
+</HtmlMarker>
+
+<QueryClass_horo>
+    <ReorderingPenalty>1</ReorderingPenalty>
+    <PartialPenalty>1</PartialPenalty>
+    <DiffFormPenalty>0</DiffFormPenalty>
+    <DiffCapsPenalty>1</DiffCapsPenalty>
+    <BaseRank>1.0</BaseRank>
+    <Marker><![CDATA[<a class="gomail_search" target="_blank" href="http://go.mail.ru/search?q=%O">%P</a>&nbsp;<img src="http://img.mail.ru/r/search_icon.gif" width="13" height="13" alt="" />]]></Marker>
+    <PhrasesFile>t/phrases/horo.qc</PhrasesFile>
+</QueryClass_horo>
+
+</Config>
+

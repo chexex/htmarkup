@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+
+<QueryQualifier>
+    <IndexFile>t/phrases.idx</IndexFile>
+    <MLocked>no</MLocked>
+    <Enabled>yes</Enabled>
+    <SaveOrigins>yes</SaveOrigins>
+</QueryQualifier>
+
+<HtmlMarker>
+  <Uniq>no</Uniq>
+</HtmlMarker>
+
+<QueryClass_school>
+    <ReorderingPenalty>0.5</ReorderingPenalty>
+    <PartialPenalty>1.0</PartialPenalty>
+    <PhrasesFile>t/phrases/school.qc</PhrasesFile>
+</QueryClass_school>
+
+<QueryClass_hitech>
+    <ReorderingPenalty>0.0</ReorderingPenalty>
+    <PartialPenalty>0.0</PartialPenalty>
+    <DiffFormPenalty>1.0</DiffFormPenalty>
+    <DiffCapsPenalty>0.1</DiffCapsPenalty>
+    <PhrasesFile>t/phrases/hitech.qc</PhrasesFile>
+</QueryClass_hitech>
+
+</Config>
+
