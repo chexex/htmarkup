@@ -3,8 +3,9 @@
 _UNIVERSE_
 logs
 idx/
-m4/
-.*/
+
+*.o
+*.lo
 
 
 # GNU Autoconf and Automake
@@ -12,6 +13,7 @@ INSTALL
 depcomp
 Makefile.in
 ltmain.sh
+libtool
 *.scan
 Makefile
 aclocal.m4
@@ -47,3 +49,13 @@ stamp-h1
 # vim
 *.swp
 *.bak
+
+# Binary results
+qclassify/cphrase
+qclassify/idx_phrases
+qclassify/qcmarker
+
+# test binaries
+tests/unit/config/config_unit_test
+tests/unit/utils/utils_unit_test
+tests/unit/qclassify/qclassify_unit_test
