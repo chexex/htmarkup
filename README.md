@@ -1,6 +1,5 @@
----------------------------------------------------------------------
 INSTALLATION:
----------------------------------------------------------------------
+=============
 
 If you have no ./configure file (git clone), perform autoreconf first:
 $ autoreconf -fiv
@@ -8,9 +7,9 @@ $ autoreconf -fiv
 $ ./configure
 $ make && make test
 
----------------------------------------------------------------------
-perllib/QClassify INSTALLATION:
----------------------------------------------------------------------
+
+PERL MODULE INSTALLATION:
+=========================
 
 To install perl module of qclasify, do the following:
 $ cd perllib/QClassify

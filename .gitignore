@@ -2,7 +2,7 @@
 *.log
 _UNIVERSE_
 logs
-idx/
+idx/*
 
 *.o
 *.lo
@@ -17,6 +17,7 @@ libtool
 *.scan
 Makefile
 aclocal.m4
+m4/*.m4
 autom4te.cache
 config.h
 config.h.in*
