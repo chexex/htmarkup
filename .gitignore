@@ -12,6 +12,7 @@ idx/*
 Makefile.in
 *.scan
 Makefile
+libtool
 aclocal.m4
 autom4te.cache
 config.h

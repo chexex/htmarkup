@@ -4,6 +4,7 @@ AM_INIT_AUTOMAKE
 
 LT_INIT([pic-only])
 AC_DISABLE_SHARED
+AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
@@ -37,13 +38,15 @@ m4_include([m4.incl/ax_path_lib_pcre.m4])
 
 AM_WITH_EXPAT
 AX_PATH_LIB_PCRE([], AC_MSG_ERROR([Could not find libpcre]))
-AX_CHECK_ICU([4.0], [], AC_MSG_ERROR([Could not find libicu/libicu-dev >= 4.0]))
+AX_CHECK_ICU([3.6], [], AC_MSG_ERROR([Could not find libicu/libicu-dev >= 3.6]))
 AM_PATH_CPPUNIT([1.9.0], [], AC_MSG_ERROR([Could not find cppunit >= 1.9.0]))
 
-LEMMATIZER_INCLUDES=`pkg-config --cflags-only-I lemmatizer`
-LEMMATIZER_LIBS=`pkg-config --libs lemmatizer`
-AC_SUBST(LEMMATIZER_INCLUDES)
-AC_SUBST(LEMMATIZER_LIBS)
+PKG_CHECK_MODULES([lemmatizer], [lemmatizer], [], \
+                  AC_MSG_ERROR([Lemmatizer can't be found by pkg-config. Have you installed gogo_lemmatizer?]))
+
+# for pkg-config <= 0.23
+AC_SUBST([lematizer_CFLAGS])
+AC_SUBST([lemmatizer_LIBS])
 
 AC_CONFIG_FILES([Makefile \
                  \

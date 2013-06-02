@@ -14,12 +14,12 @@ WriteMakefile(
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/QClassify.pm', # retrieve abstract from module
        AUTHOR         => 'KISEL Jan <kisel@corp.mail.ru>') : ()),
-    LIBS              => [ "@LEMMATIZER_LIBS@ -L../../libs/qclassify/.libs -lqclassify -lexpat @ICU_LIBS@ @PCRE_LIBS@" ],
+    LIBS              => [ "@lemmatizer_LIBS@ -L../../libs/qclassify/.libs -lqclassify -lexpat @ICU_LIBS@ @PCRE_LIBS@" ],
     DEFINE            => '-Wno-write-strings',
     CC                => "$CC",
     LD                => "$CC",
 
-    INC               => "-I. -I$BUILDROOT/libs @LEMMATIZER_INCLUDES@ @PCRE_CFLAGS@",
+    INC               => "-I. -I$BUILDROOT/libs @lemmatizer_CFLAGS@ @PCRE_CFLAGS@",
 	# Un-comment this if you add C files to link with later:
     # OBJECT            => '$(O_FILES)', # link all the C files too
     XSOPT             => '-C++',
