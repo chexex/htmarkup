@@ -324,18 +324,18 @@ class QCMarkupHtmlTest : public CppUnit::TestFixture
   
   public:
     CPPUNIT_TEST_SUITE (QCMarkupHtmlTest);
-    CPPUNIT_TEST (PrepareIndex);
-    CPPUNIT_TEST (LoadingTest);
-    CPPUNIT_TEST (SimpleMarkupTest);
-    CPPUNIT_TEST (MarkupFlagsTest);
-    CPPUNIT_TEST (MarkerTest);
-    CPPUNIT_TEST (LoadConfigSettingsTest);
-    CPPUNIT_TEST (MarkerNothingToMarkTest);
-    CPPUNIT_TEST (MarkerEncodeTest);
-    CPPUNIT_TEST (MarkerSkipEscapesProperlyTest);
-    CPPUNIT_TEST (UseUdataAsFormatMeaningTest);
-    CPPUNIT_TEST (UrlEscapedStringSkipWell);
-    CPPUNIT_TEST (EscapingSpecialMarkersTest);
+        CPPUNIT_TEST (PrepareIndex);
+        CPPUNIT_TEST (LoadingTest);
+        CPPUNIT_TEST (SimpleMarkupTest);
+        CPPUNIT_TEST (MarkupFlagsTest);
+        CPPUNIT_TEST (MarkerTest);
+        CPPUNIT_TEST (LoadConfigSettingsTest);
+        CPPUNIT_TEST (MarkerNothingToMarkTest);
+        CPPUNIT_TEST (MarkerEncodeTest);
+        CPPUNIT_TEST (MarkerSkipEscapesProperlyTest);
+        CPPUNIT_TEST (UseUdataAsFormatMeaningTest);
+        CPPUNIT_TEST (UrlEscapedStringSkipWell);
+        CPPUNIT_TEST (EscapingSpecialMarkersTest);
     CPPUNIT_TEST_SUITE_END();
 };
 

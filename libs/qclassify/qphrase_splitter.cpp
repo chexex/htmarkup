@@ -39,8 +39,7 @@ void PhraseSplitterBase::setLemmatizer(lemInterface *plem) { m_plem = plem; }
 void PhraseSplitterBase::addWord(const UnicodeString &s)
 {
     std::string utf8_buf;
-    s.toUTF8String(utf8_buf);
-    //std::cout << "addWord: " << utf8_buf << "\n";
+    UnicodeString2UTF8(s, &utf8_buf);
     addWord(utf8_buf.c_str(), utf8_buf.length());
 }
   

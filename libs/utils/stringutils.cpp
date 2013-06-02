@@ -38,5 +38,6 @@ void strNormalize(std::string &a_str)
     }
 
     a_str.clear();
-    ustring.toUTF8String(a_str);
+    
+    UnicodeString2UTF8(ustring, &a_str);
 }

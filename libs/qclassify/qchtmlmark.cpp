@@ -465,7 +465,7 @@ bool QCHtmlMarkerImpl::BuildPhraseURL(const struct match_info &pmi,
   
   const char *udata = m_psrch->getUserData(pmi.phrase_id);
   const char *orig_phrase = m_psrch->getOriginPhrase(pmi.phrase_id);
-  
+
   map<unsigned, ClsMarkupConfig>::const_iterator it = m_classConfigs.find(pmi.clsid);
   const ClsMarkupConfig *pccfg = (it == m_classConfigs.end()) ? NULL : &it->second;
   bool useUdataAsFormat = !pccfg || pccfg->bUseUdataAsFormat;

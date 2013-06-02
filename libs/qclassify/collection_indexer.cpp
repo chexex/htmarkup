@@ -49,26 +49,38 @@ void PhraseCollectionIndexer::addFile(unsigned cls, std::istream &is)
     if (s.length() != 0) 
     {
       unsigned rank = 100;
-      const char *udata = NULL;
+      std::string udata;
       
       size_t pos = s.find("//");
-      if (pos != std::string::npos) {
-        char *ech;
-        long int i = strtol(s.c_str() + pos + 2, &ech, 10);
-        if (*ech == '\0' || *ech == ';' || *ech == '%') {
-          // it seems to be phrase rank declaration
-          rank = (unsigned)i;
-          s.erase(pos);
+      if (pos != std::string::npos)
+      {
+        char *ech = NULL;
+        const char *rank_pos = s.c_str() + pos + 2;
+        while (*rank_pos == ' ' || *rank_pos == '\t')
+            rank_pos++; // skip spaces after "//"
+
+        if (*rank_pos != '\0') {
+            long int i = strtol(rank_pos, &ech, 10);
+            if (*ech == '\0' || *ech == ';' || *ech == '%') {
+              // it seems to be phrase rank declaration
+              rank = (unsigned)i;
+            }
         }
-        
-        for (; *ech && *ech != ';'; ech++)
-          ;
-        if (*ech == ';')
-          udata =  ech + 1;
+
+        if (ech) {
+            // look for user-data
+            while (*ech && *ech != ';')
+                ech++;
+
+            if (*ech == ';')
+              udata.assign(ech + 1);
+        }
+
+        s.erase(pos);
       }
-     
+
       if (trim_str(s))
-        addPhrase(cls, s, rank, udata);
+        addPhrase(cls, s, rank, udata.empty() ? NULL : udata.c_str());
     }
   }
 }

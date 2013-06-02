@@ -48,7 +48,9 @@ void PhraseSplitterPCRE::splitPhrase(const string &s)
     bool escUsed = false;
     m_modString.clear();
   
-    UnicodeString word, uexpr(UnicodeString::fromUTF8(s));
+    UErrorCode status = U_ZERO_ERROR;
+    UnicodeString word;
+    UnicodeString uexpr = UTF8toUnicodeString(s);
     std::vector< std::pair<int, int> > wbounds; // word's {offset, len}
     const int32_t length = uexpr.countChar32();
 
@@ -136,7 +138,7 @@ void PhraseSplitterPCRE::splitPhrase(const string &s)
         }
     }
 
-    mod_str.toUTF8String(m_modString);
+    UnicodeString2UTF8(mod_str, &m_modString);
 }
 
 } // namespace gogo
