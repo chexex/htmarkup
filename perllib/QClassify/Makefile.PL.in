@@ -14,7 +14,7 @@ WriteMakefile(
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/QClassify.pm', # retrieve abstract from module
        AUTHOR         => 'KISEL Jan <kisel@corp.mail.ru>') : ()),
-    LIBS              => [ "@lemmatizer_LIBS@ -L../../libs/qclassify/.libs -lqclassify -lexpat @ICU_LIBS@ @PCRE_LIBS@" ],
+    LIBS              => [ "-L../../libs/qclassify/.libs -lqclassify @lemmatizer_LIBS@ @ICU_LIBS@ @PCRE_LIBS@ -lexpat" ],
     DEFINE            => '-Wno-write-strings',
     CC                => "$CC",
     LD                => "$CC",
