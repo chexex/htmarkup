@@ -31,7 +31,7 @@ void QCIndexReader::load(MemReader &mrd)
 }
 
 /// @brief override loaded penalties and baseRank from config
-void QCIndexReader::mergeConfig(const XmlConfig *pcfg)
+void QCIndexReader::mergeConfig(const XmlConfig *)
 {
   
 }

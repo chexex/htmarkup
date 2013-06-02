@@ -48,7 +48,6 @@ void PhraseSplitterPCRE::splitPhrase(const string &s)
     bool escUsed = false;
     m_modString.clear();
   
-    UErrorCode status = U_ZERO_ERROR;
     UnicodeString word;
     UnicodeString uexpr = UTF8toUnicodeString(s);
     std::vector< std::pair<int, int> > wbounds; // word's {offset, len}

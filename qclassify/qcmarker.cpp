@@ -93,7 +93,7 @@ main(int argc, char *argv[])
     auto_ptr<lemInterface> plem;
     XmlConfig cfg(cfg_path);
     
-    if (cfg.GetBool("QueryQualifier", "UseLemmatizer", true))
+    if (!nolemm || cfg.GetBool("QueryQualifier", "UseLemmatizer", true))
       plem.reset(new lemInterface);
     
     PhraseCollectionLoader ldr(plem.get());

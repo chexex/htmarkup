@@ -235,9 +235,6 @@ class QCMarkupHtmlTest : public CppUnit::TestFixture
     QCHtmlMarker mrk(ldr.getSearcher());
     mrk.loadSettings(&cfg);
     
-    QCHtmlMarker::MarkupSettings st = mrk.getConfigSettings();
-    st.bSkipFirstWord = false;
-    
     string os;
     
     string input = "<p></p><p>МОСКВА, 14 июн&nbsp;&mdash; РИА Новости. &laquo;Москва&raquo; ушла на&nbsp;перерыв в&nbsp;чемпионате России по&nbsp;футболу в&nbsp;ранге лидера, выиграв в&nbsp;матче 12-го тура со&nbsp;счетом 2:0 в&nbsp;столичном дерби у&nbsp;ЦСКА.</p><p>Результаты остальных матчей, сыгранных в&nbsp;российской премьер-лиге в&nbsp;выходные:</p><p>&laquo;Рубин&raquo; (Казань)&nbsp;&mdash; &laquo;Ростов&raquo; (Ростов-на-Дону)&nbsp;&mdash; 0:2,</p><p>&laquo;Спартак&raquo; (Москва)&nbsp;&mdash; &laquo;Химки&raquo; (Московская область)&nbsp;&mdash; 1:0,</p><p>&laquo;Динамо&raquo; (Москва)&nbsp;&mdash; &laquo;Кубань&raquo; (Краснодар)&nbsp;&mdash; 1:1,</p><p>&laquo;Терек&raquo; (Грозный)&nbsp;&mdash; &laquo;Крылья Советов&raquo; (Самара)&nbsp;&mdash; 3:2,</p><p>&laquo;Томь&raquo; (Томск)&nbsp;&mdash; &laquo;Амкар&raquo; (Пермь)&nbsp;&mdash; 1:2,</p><p>&laquo;Сатурн&raquo; (Московская область)&nbsp;&mdash; &laquo;Локомотив&raquo; (Москва)&nbsp;&mdash; 2:0,</p><p>&laquo;Спартак&raquo; (Нальчик)&nbsp;&mdash; &laquo;Зенит&raquo; (Санкт-Петербург)&nbsp;&mdash; 2:2.</p><p>Турнирная таблица чемпионата России:</p><p>1. &laquo;Москва&raquo;&nbsp;&mdash; 23 очка (12 матчей),</p><p>2. &laquo;Рубин&raquo;&nbsp;&mdash; 21 (11),</p><p>3. &laquo;Спартак&raquo; М&nbsp;&mdash; 20 (12),</p><p>4. &laquo;Крылья Советов&raquo;&nbsp;&mdash; 20 (12),</p><p>5. &laquo;Динамо&raquo;&nbsp;&mdash; 20 (12),</p><p>6. ЦСКА&nbsp;&mdash; 19 (11),</p><p>7. &laquo;Зенит&raquo;&nbsp;&mdash; 19 (12),</p><p>8. &laquo;Ростов&raquo;&nbsp;&mdash; 18 (12),</p><p>9. &laquo;Локомотив&raquo;&nbsp;&mdash; 16 (12),</p><p>10. &laquo;Терек&raquo;&nbsp;&mdash; 16 (12),</p><p>11. &laquo;Кубань&raquo;&nbsp;&mdash; 13 (12),</p><p>12. &laquo;Сатурн&raquo;&nbsp;&mdash; 13 (12),</p><p>13. &laquo;Томь&raquo;&nbsp;&mdash; 12 (12),</p><p>14. &laquo;Амкар&raquo;&nbsp;&mdash; 11 (12),</p><p>15. &laquo;Спартак&raquo; Нч&nbsp;&mdash; 8 (11),</p><p>16. &laquo;Химки&raquo;&nbsp;&mdash; 4 (11).</p>";
@@ -289,8 +286,6 @@ class QCMarkupHtmlTest : public CppUnit::TestFixture
     mrk.loadSettings(&cfg);
     
     
-    QCHtmlMarker::MarkupSettings st = mrk.getConfigSettings();
-    
     std::string os;
     
     const string input = "did you mention what kdevelop 4 have cool C++ parser";
@@ -308,9 +303,6 @@ class QCMarkupHtmlTest : public CppUnit::TestFixture
     
     QCHtmlMarker mrk(ldr.getSearcher());
     mrk.loadSettings(&cfg);
-    
-    
-    QCHtmlMarker::MarkupSettings st = mrk.getConfigSettings();
     
     std::string os;
     

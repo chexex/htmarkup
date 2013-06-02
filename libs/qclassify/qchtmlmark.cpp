@@ -744,7 +744,7 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
           wlen = 0;
                     
           // check for end of sentence - mark
-          if (c == '.' || c == '?' || c == '!' || c == '«' || c == ';') 
+          if (c == '.' || c == '?' || c == '!' || c == ';') 
             skip_word = st.bSkipFirstWord;
         }
         else 

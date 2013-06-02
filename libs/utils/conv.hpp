@@ -24,7 +24,7 @@ namespace gogo {
                   std::string in,
                   std::string *out)
     {
-        conv_str(from, to, in.c_str(), out, in.length());
+        return conv_str(from, to, in.c_str(), out, in.length());
     }
 }
 

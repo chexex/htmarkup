@@ -9,7 +9,7 @@ UnicodeString2UTF8(const UnicodeString &us, std::string *os)
 
     int32_t len = us.extract(const_cast<char *>(os->data()), os->size()+1, NULL, status);
 
-    if (U_ZERO_ERROR != status || len >= os->size()) {
+    if (U_ZERO_ERROR != status || len >= (int32_t)os->size()) {
         throw std::runtime_error("Failed to convert UnicodeString to UTF-8");
     }
 
