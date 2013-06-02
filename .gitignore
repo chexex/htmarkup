@@ -9,26 +9,17 @@ idx/*
 
 
 # GNU Autoconf and Automake
-INSTALL
-depcomp
 Makefile.in
-ltmain.sh
-libtool
 *.scan
 Makefile
 aclocal.m4
-m4/*.m4
 autom4te.cache
 config.h
 config.h.in*
-config.guess
-config.sub
 config.log
-install-sh
 config.status
 /config/*
 configure
-missing
 .deps
 .dirstamp
 stamp-h1
