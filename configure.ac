@@ -1,6 +1,6 @@
 AC_PREREQ(2.53)
 AC_INIT([htmarkup], [0.2], [kisel@corp.mail.ru])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 
 LT_INIT([pic-only])
 AC_DISABLE_SHARED
