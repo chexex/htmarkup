@@ -38,7 +38,7 @@ CAgent cagent;
 
 PyObject* pyagent_instance = NULL;
 
-PyObject* PyExc_QClassifyError = PyErr_NewException((char *)"pyQClassify.QClassifyError", NULL, NULL);
+PyObject* PyExc_QClassifyError = PyErr_NewException((char *)"libpyQClassify.QClassifyError", NULL, NULL);
 
 
 int prepareSearch(PyObject* self);
@@ -73,14 +73,8 @@ static PyObject * PyAgent_new(PyTypeObject *type, PyObject *args, PyObject *kwds
     return (PyObject *)self;
 }
 
-static int PyAgent_init(PyObject *self, PyObject *args, PyObject *kwds)
+static int PyAgent_init(PyObject *self)
 {
-    char *path=NULL;
-    int error;
-
-    static char *kwlist[] = {(char *)"path", NULL};
-
-    PyArg_ParseTupleAndKeywords(args, kwds, "|s", kwlist, &path);        
 
     cagent.m_psrch = 0;
 
@@ -98,18 +92,7 @@ static int PyAgent_init(PyObject *self, PyObject *args, PyObject *kwds)
         PyErr_SetString(PyExc_RuntimeError, "Error occured while initializing lemmatizer libraty");
         return -1;
     }
-
-    if (path != NULL)
-    {
-        error = loadConfig(self, path);
-
-        if (error != ESTATUS_OK)
-        {
-            PyErr_SetString(PyExc_RuntimeError, "Error occured while loading configuration file");
-            return -1;
-        };
-    }
-
+   
     return 0;
 }
 
@@ -157,15 +140,15 @@ int index2file(PyObject* self)
     return ESTATUS_OK;
 }
 
-// PhraseSearcher::res_t& searchPhrase(PyObject* self, const char *s) 
-// {
-//     if (!cagent.m_psrch) 
-//       prepareSearch(self);
+PhraseSearcher::res_t& searchPhrase(PyObject* self, const char *s) 
+{
+    if (!cagent.m_psrch) 
+      prepareSearch(self);
 
-//     cagent.m_req.assign(s);
-//     cagent.m_psrch->searchPhrase(cagent.m_req, cagent.m_clsRes);
-//     return cagent.m_clsRes;
-// }
+    cagent.m_req.assign(s);
+    cagent.m_psrch->searchPhrase(cagent.m_req, cagent.m_clsRes);
+    return cagent.m_clsRes;
+}
 
 int initMarkup(PyObject* self) 
 {
@@ -224,17 +207,6 @@ static PyObject * PyAgent_initMarkup(PyObject* self)
     return Py_None;
 }
 
-static PyObject * PyAgent_reinitMarkup(PyObject* self)
-{
-    if (initMarkup(self)) {
-        PyErr_SetString(PyExc_QClassifyError, "Unable to reinit markup.");
-        return NULL;
-    }
-
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
 static PyObject* PyAgent_version(PyObject* self)
 {
     return PyInt_FromLong(qcls_impl::QCLASSIFY_INDEX_VERSION);
@@ -281,32 +253,32 @@ static PyObject* PyAgent_getIndexFileName(PyObject* self)
     return result;
 }
 
-// static PyObject* PyAgent_classifyPhrase(PyObject* self, PyObject *args, PyObject *kwds)
-// {
-//     char* phrase=NULL;
-//     PyObject* res_list = PyList_New(0);
-//     PyObject* res_item;
+static PyObject* PyAgent_classifyPhrase(PyObject* self, PyObject *args, PyObject *kwds)
+{
+    char* phrase=NULL;
+    PyObject* res_list = PyList_New(0);
+    PyObject* res_item;
 
-//     static char *kwlist[] = {(char *)"phrase", NULL};
+    static char *kwlist[] = {(char *)"phrase", NULL};
 
-//     if (! PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &phrase))
-//         return NULL;
+    if (! PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &phrase))
+        return NULL;
 
-//     PhraseSearcher::res_t &r = searchPhrase(self, phrase);
-//     if (r.size() != 0) 
-//     {
-//         for(PhraseSearcher::res_t::const_iterator it = r.begin(); it != r.end(); it++) 
-//         {
-//             res_item = PyTuple_Pack(2, PyString_FromString(it->first.c_str()), PyLong_FromLong(it->second) );
-//             PyList_Append(res_list, res_item);
-//         }
+    PhraseSearcher::res_t &r = searchPhrase(self, phrase);
+    if (r.size() != 0) 
+    {
+        for(PhraseSearcher::res_t::const_iterator it = r.begin(); it != r.end(); it++) 
+        {
+            res_item = PyTuple_Pack(2, PyString_FromString(it->first.c_str()), PyLong_FromLong(it->second) );
+            PyList_Append(res_list, res_item);
+        }
 
-//         Py_INCREF(res_list);
-//         return res_list;
-//     }
-//     Py_INCREF(Py_None);
-//     return Py_None;
-// }
+        Py_INCREF(res_list);
+        return res_list;
+    }
+    Py_INCREF(Py_None);
+    return Py_None;
+}
 
 static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
 {
@@ -330,21 +302,20 @@ static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
 
 static PyMethodDef PyAgent_methods[] = 
 {
-    {"initMarkup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, ""},
-    {"reinitMarkup", (PyCFunction)PyAgent_reinitMarkup, METH_NOARGS, ""},
+    {"initMarkup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, "Initialize markup"},    
     {"version", (PyCFunction)PyAgent_version, METH_NOARGS, "C library version"},    
-    {"loadConfig", (PyCFunction)PyAgent_loadConfig, METH_KEYWORDS, ""},
-    {"index2file", (PyCFunction)PyAgent_index2file, METH_NOARGS, ""},
-    {"getIndexFileName", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, ""},
-    // {"classifyPhrase", (PyCFunction)PyAgent_classifyPhrase, METH_KEYWORDS, ""},
-    {"markup", (PyCFunction)PyAgent_markup, METH_KEYWORDS, ""},
+    {"loadConfig", (PyCFunction)PyAgent_loadConfig, METH_KEYWORDS, "Loads config from file"},
+    {"index2file", (PyCFunction)PyAgent_index2file, METH_NOARGS, "Builds index file"},
+    {"getIndexFileName", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path"},
+    {"classifyPhrase", (PyCFunction)PyAgent_classifyPhrase, METH_KEYWORDS, ""},
+    {"markup", (PyCFunction)PyAgent_markup, METH_KEYWORDS, "Markup text"},
     {NULL,  NULL, 0, NULL }  /* Sentinel */
 };
 
 static PyTypeObject PyAgentType = {
     PyObject_HEAD_INIT(NULL)
     0,                              /*ob_size*/
-    "pyQClassify.Agent",   /*tp_name*/
+    "libpyQClassify.Agent",   /*tp_name*/
     sizeof(PyObject),         /*tp_basicsize*/
     0,                                  /*tp_itemsize*/
     (destructor)PyAgent_dealloc, /*tp_dealloc*/
@@ -400,14 +371,14 @@ static PyMethodDef module_functions[] = {
     #define PyMODINIT_FUNC void
 #endif
 
-PyMODINIT_FUNC initpyQClassify(void) 
+PyMODINIT_FUNC initlibpyQClassify(void) 
 {
     PyObject* module;
 
     if (PyType_Ready(&PyAgentType) < 0)
         return;
 
-    module = Py_InitModule3("pyQClassify", module_functions, "Python wrapper around QClassify library.");
+    module = Py_InitModule3("libpyQClassify", module_functions, "Python wrapper around QClassify library.");
 
     if (module == NULL)
       return;

@@ -1,17 +1,21 @@
-import os
+#-*- coding: utf-8 -*-
+
 from distutils.core import setup, Extension
 
 PROJECT_ROOT =  '../../'
 
 setup(	
 	name 		 = 'pyQClassify', 
-	version 	 = '1.0',  
+	version 	 = '1.1',  
 	description  = 'Python wrapper for QClassify library',
 	author 		 = 'Andrey Babak',
 	author_email = 'a.babak@corp.mail.ru',
- 	ext_modules=[
+	packages     = ['pyQClassify'],
+    package_dir  = {'pyQClassify': '.'},
+
+    ext_modules=[
  		Extension(
- 			'pyQClassify', 
+ 			'pyQClassify.libpyQClassify', 
  			[
  				'src/pyQClassify.cpp'
  			],
@@ -46,5 +50,5 @@ setup(
 		 		'expat',		 		
 		 	],
  		)
- 	],
+ 	], 	
 )
