@@ -57,12 +57,15 @@ class ColorizerAgent(object):
             text = text.decode('utf8')
 
         # escape all non cp1251 symbols (e.q. ß, Ö)
-        text = text.encode('cp1251', 'xmlcharrefreplace')
+        text = text.encode('cp1251', 'xmlcharrefreplace').decode('cp1251')
+
+        # convert to ascii
+        text = text.encode('utf8')
 
         marked_text = self.agent.markup(text)
 
         # back to unicode
-        marked_text = marked_text.decode('cp1251')
+        marked_text = marked_text.decode('utf8')
         
         # replace non cp1251 symbols
         result = re.sub('&#(\d+);', lambda m: unichr(int(m.group(1))), marked_text)
