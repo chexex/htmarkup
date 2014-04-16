@@ -2,6 +2,7 @@
 #include <string.h>
 #include <iconv.h>
 #include <errno.h>
+#include <stdexcept>
 
 #include "conv.hpp"
 
@@ -32,7 +33,8 @@ bool conv_str(conv_enc_t from, conv_enc_t to, const char *in, std::string *out, 
         if (ret == EILSEQ || ret == EINVAL) {
             return false;
         }
-        assert(0 && "Should not be there");
+        throw std::invalid_argument("Should not be there assertion");
+        //assert(0 && "Should not be there");
     }
 
     out->resize(out->size() - outbytesleft);
