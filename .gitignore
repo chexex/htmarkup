@@ -52,3 +52,6 @@ qclassify/qcmarker
 tests/unit/config/config_unit_test
 tests/unit/utils/utils_unit_test
 tests/unit/qclassify/qclassify_unit_test
+
+#python
+pythonlib/pyQClassify/build
