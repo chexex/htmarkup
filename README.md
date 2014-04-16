@@ -29,6 +29,8 @@ To install python package:
 
 ``` bash
 $ cd pythonlib/pyQClassify
+$ git apply pythonlib/pyQClassify/patches/QClassify.patch
+$ python setup.py build
 $ sudo python setup.py install
 ```
 

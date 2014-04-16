@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include <stdexcept>
 #include "config/config.hpp"
 #include "lem_interface/lem_interface.hpp"
 #include "qclassify/qclassify.hpp"
@@ -293,10 +294,16 @@ static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
         return NULL;
 
     getMarkupSettings(self, &st);
-    callMarkup(self, (std::string)text, out, st);
-
+    
+    try{    
+        callMarkup(self, (std::string)text, out, st);
+    }
+    catch(std::invalid_argument& e){
+        PyErr_SetString(PyExc_QClassifyError, "Unhandled exception.");
+        return NULL;
+    }
     return PyString_FromString(out.c_str());
-
+    
 }
 
 

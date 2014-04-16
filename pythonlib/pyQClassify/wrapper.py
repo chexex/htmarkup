@@ -51,7 +51,6 @@ class ColorizerAgent(object):
         self.configured = True
         return res
 
-    # WARNING: self.agent.markup(text) 
     def markup(self, text):
         if isinstance(text, str):
             text = text.decode('utf8')
@@ -61,8 +60,10 @@ class ColorizerAgent(object):
 
         # convert to ascii
         text = text.encode('utf8')
-
-        marked_text = self.agent.markup(text)
+        try:
+            marked_text = self.agent.markup(text)
+        except QClassifyError:
+            marked_text = text
 
         # back to unicode
         marked_text = marked_text.decode('utf8')
