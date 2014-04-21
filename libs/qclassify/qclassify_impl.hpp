@@ -19,7 +19,7 @@
 
 #include "icuincls.h"
 #include "defs.hpp"
-#include "lem_interface/lem_interface.hpp"
+#include <Interfaces/cpp/LemInterface.hpp>
 #include "utils/memio.hpp"
 
 namespace gogo 
@@ -87,7 +87,7 @@ namespace qcls_impl
 
 class PhraseSplitterBase 
 {
-  lemInterface *m_plem;
+  LemInterface *m_plem;
   protected:
     void addWord(const char *w, int len);
     void addWord(const UnicodeString &us);
@@ -103,8 +103,8 @@ class PhraseSplitterBase
     std::vector<word_info> vWords;
     
   public:
-    PhraseSplitterBase(lemInterface *plem = NULL);
-    void setLemmatizer(lemInterface *plem);
+    PhraseSplitterBase(LemInterface *plem = NULL);
+    void setLemmatizer(LemInterface *plem);
     unsigned split(const std::string &s);
     virtual ~PhraseSplitterBase() {}
 };

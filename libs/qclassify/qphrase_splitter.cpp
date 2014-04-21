@@ -8,7 +8,7 @@
 #include <string>
 #include <iostream>
 
-#include "lem_interface/lem_interface.hpp"
+#include <Interfaces/cpp/LemInterface.hpp>
 #include "hashes/hashes.hpp"
 #include "utils/stringutils.hpp"
 #include "qclassify_impl.hpp"
@@ -20,7 +20,7 @@
 namespace gogo 
 {
   
-PhraseSplitterBase::PhraseSplitterBase(lemInterface *plem /* = NULL */)
+PhraseSplitterBase::PhraseSplitterBase(LemInterface *plem /* = NULL */)
 {
   setLemmatizer(plem);
 }
@@ -34,7 +34,7 @@ unsigned PhraseSplitterBase::split(const std::string &s)
   
 /// @brief set lemmatizer interface pointer
 /// @brief without this interface, words will not be transformed to their base forms
-void PhraseSplitterBase::setLemmatizer(lemInterface *plem) { m_plem = plem; }
+void PhraseSplitterBase::setLemmatizer(LemInterface *plem) { m_plem = plem; }
 
 void PhraseSplitterBase::addWord(const UnicodeString &s)
 {

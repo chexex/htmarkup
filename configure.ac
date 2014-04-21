@@ -50,7 +50,6 @@ AC_SUBST([lemmatizer_LIBS])
 
 AC_CONFIG_FILES([Makefile \
                  \
-                 libs/lem_interface/Makefile \
                  libs/config/Makefile \
                  libs/hashes/Makefile \
                  libs/utils/Makefile \

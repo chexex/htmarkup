@@ -143,7 +143,7 @@ void PhraseIndexer::addPhrase(unsigned clsid, const string &phrase,
   m_pimpl->addPhrase(clsid, phrase, rank, udata);
 }
 
-PhraseIndexer::PhraseIndexer(lemInterface *plem /* = NULL */) { 
+PhraseIndexer::PhraseIndexer(LemInterface *plem /* = NULL */) { 
   m_pimpl = new PhraseIndexerImpl; 
   setLemmatizer(plem);
 }
@@ -154,7 +154,7 @@ void PhraseIndexer::getStat(stat *st) const { *st = m_pimpl->m_stat; }
 void PhraseIndexer::optimize() { m_pimpl->optimize(); }
 size_t PhraseIndexer::size() const { return m_pimpl->size(); }
 void PhraseIndexer::save(MemWriter &mwr) { m_pimpl->save(mwr); }
-void PhraseIndexer::setLemmatizer(lemInterface *plem) { 
+void PhraseIndexer::setLemmatizer(LemInterface *plem) { 
   m_pimpl->m_splitterPlain.setLemmatizer(plem); 
   m_pimpl->m_splitterRE.setLemmatizer(plem); 
 }

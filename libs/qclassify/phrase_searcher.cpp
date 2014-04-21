@@ -62,13 +62,13 @@ class PhraseSearcherImpl : public QSerializerIn
     friend class PhraseSearcher;
 };
   
-PhraseSearcher::PhraseSearcher(lemInterface *plem /* = NULL */) {
+PhraseSearcher::PhraseSearcher(LemInterface *plem /* = NULL */) {
   m_pQCIndex = NULL;
   m_pimpl = new PhraseSearcherImpl;
   setLemmatizer(plem);
 }
 
-void PhraseSearcher::setLemmatizer(lemInterface *plem) {
+void PhraseSearcher::setLemmatizer(LemInterface *plem) {
   m_pimpl->m_splitter.setLemmatizer(plem);
 }
 

@@ -14,14 +14,14 @@
 #include <string>
 
 #include "config/config.hpp"
-#include "lem_interface/lem_interface.hpp"
+#include <Interfaces/cpp/LemInterface.hpp>
 #include "qclassify/qclassify.hpp"
 #include "qclassify/htmlmark.hpp"
 
 using namespace std;
 using namespace gogo;
 
-extern lemInterface lem;
+extern LemInterface lem;
 
 static const char *CONFIG_PATH_SIMPLE="cfg/config_simple.xml";
 static const char *CONFIG_PATH_MARKERCFG="cfg/config_markercfg.xml";
