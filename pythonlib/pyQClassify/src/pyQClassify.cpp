@@ -301,6 +301,20 @@ static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
     
 }
 
+static PyObject* PyAgent_firstForm(PyObject* self, PyObject *args, PyObject *kwds)
+{
+
+    char* word=NULL;    
+    std::string out = "";
+
+    static char *kwlist[] = {(char *)"word", NULL};
+
+    if (! PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &word))
+        return NULL;
+    
+    cagent.m_pLem->FirstForm((std::string)word, &out);
+    return PyString_FromString(out.c_str());
+}
 
 static PyMethodDef PyAgent_methods[] = 
 {
@@ -311,6 +325,7 @@ static PyMethodDef PyAgent_methods[] =
     {"getIndexFileName", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path"},
     {"classifyPhrase", (PyCFunction)PyAgent_classifyPhrase, METH_KEYWORDS, ""},
     {"markup", (PyCFunction)PyAgent_markup, METH_KEYWORDS, "Markup text"},
+    {"firstForm", (PyCFunction)PyAgent_firstForm, METH_KEYWORDS, "Return first form of given keyword"},
     {NULL,  NULL, 0, NULL }  /* Sentinel */
 };
 
