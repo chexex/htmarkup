@@ -23,12 +23,12 @@
 namespace gogo
 {
 
-PhraseCollectionIndexer::PhraseCollectionIndexer(lemInterface *plem /* = NULL */) : m_optimizeIndex(true), quiet_(false)
+PhraseCollectionIndexer::PhraseCollectionIndexer(LemInterface *plem /* = NULL */) : m_optimizeIndex(true), quiet_(false)
 {
     setLemmatizer(plem);
 }
 
-void PhraseCollectionIndexer::setLemmatizer(lemInterface *plem) {
+void PhraseCollectionIndexer::setLemmatizer(LemInterface *plem) {
     m_phraseIndexer.setLemmatizer(plem);
 }
 

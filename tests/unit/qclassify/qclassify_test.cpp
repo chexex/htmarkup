@@ -16,7 +16,7 @@
 #include <memory>
 
 #include "config/config.hpp"
-#include "lem_interface/lem_interface.hpp"
+#include <Interfaces/cpp/LemInterface.hpp>
 #include "defs.hpp"
 #include "utils/hash_array.hpp"
 #include "utils/ptr_array.hpp"
@@ -26,7 +26,7 @@
 using namespace std;
 using namespace gogo;
 
-lemInterface lem;
+LemInterface lem(true /* UTF8 */);
 
 class QClassifyTest : public CppUnit::TestFixture
 {

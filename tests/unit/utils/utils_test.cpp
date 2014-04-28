@@ -11,7 +11,7 @@
 #include <cppunit/Asserter.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "lem_interface/lem_interface.hpp"
+#include "Interfaces/cpp/LemInterface.hpp"
 #include "utils/stringutils.hpp"
 
 class StringUtilsTest : public CppUnit::TestFixture
@@ -34,7 +34,7 @@ class StringUtilsTest : public CppUnit::TestFixture
 
     void LemInterfaceTest()
     {
-        lemInterface lem;
+        LemInterface lem(true /* UTF8 */);
 #define CHECK_LEM(str, lem_str) { std::string __s(str); lem.FirstForm(str, &__s); CPPUNIT_ASSERT_EQUAL((std::string)lem_str, __s); }
 
         CHECK_LEM("ПАРКОВ", "ПАРК");

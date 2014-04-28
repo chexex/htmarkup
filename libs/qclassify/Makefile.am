@@ -1,11 +1,11 @@
-INCLUDES = -I$(top_builddir) -I$(top_builddir)/libs @PCRE_CFLAGS@
+INCLUDES = -I$(top_builddir) -I$(top_builddir)/libs @PCRE_CFLAGS@ @lemmatizer_CFLAGS@
 
 noinst_LTLIBRARIES = libqclassify.la
 
 libqclassify_la_LIBADD = $(top_srcdir)/libs/config/libconfig.la \
                          $(top_srcdir)/libs/utils/libutil.la    \
                          $(top_srcdir)/libs/hashes/libhashes.la \
-                         $(top_srcdir)/libs/lem_interface/liblem_interface.la \
+                         @lemmatizer_LIBS@ \
                          @PCRE_LIBS@
 
 libqclassify_la_SOURCES = \
