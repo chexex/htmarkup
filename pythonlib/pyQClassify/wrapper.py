@@ -51,26 +51,18 @@ class ColorizerAgent(object):
         self.configured = True
         return res
 
-    def markup(self, text):
-        if isinstance(text, str):
-            text = text.decode('utf8')
-
-        # escape all non cp1251 symbols (e.q. ß, Ö)
-        text = text.encode('cp1251', 'xmlcharrefreplace').decode('cp1251')
-
-        # convert to ascii
-        text = text.encode('utf8')
-        try:
-            marked_text = self.agent.markup(text)
-        except QClassifyError:
-            marked_text = text
-
-        # back to unicode
-        marked_text = marked_text.decode('utf8')
+    def markup(self, text):       
+        is_unicode =False
         
-        # replace non cp1251 symbols
-        result = re.sub('&#(\d+);', lambda m: unichr(int(m.group(1))), marked_text)
-        return result
+        if isinstance(text, unicode):            
+            is_unicode = True
+            text = text.encode('utf8')
+
+        marked_text = self.agent.markup(text)
+
+        if is_unicode:
+            marked_text = marked_text.decode('utf8')
+        return marked_text
 
     def version(self):
         return self.agent.version()

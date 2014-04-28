@@ -7,7 +7,7 @@
 #include <string>
 #include <stdexcept>
 #include "config/config.hpp"
-#include "lem_interface/lem_interface.hpp"
+#include <Interfaces/cpp/LemInterface.hpp>
 #include "qclassify/qclassify.hpp"
 #include "qclassify/qclassify_impl.hpp"
 #include "qclassify/htmlmark.hpp"
@@ -23,7 +23,7 @@ using namespace gogo;
 typedef struct {
     const PhraseSearcher *m_psrch;
     PhraseCollectionLoader m_ldr;
-    static lemInterface *m_pLem;
+    static LemInterface *m_pLem;
     static int lem_nrefs;
     XmlConfig m_cfg;
     std::string m_req;
@@ -32,7 +32,7 @@ typedef struct {
 } CAgent;
 
 
-lemInterface *CAgent::m_pLem = NULL;
+LemInterface *CAgent::m_pLem = NULL;
 int CAgent::lem_nrefs = 0;
 
 CAgent cagent;
@@ -84,7 +84,7 @@ static int PyAgent_init(PyObject *self)
         if (!cagent.m_pLem )
         {
             assert(!cagent.lem_nrefs);
-            cagent.m_pLem = new lemInterface();
+            cagent.m_pLem = new LemInterface(true /* UTF8 */);
         }
         cagent.lem_nrefs++;
     } 
@@ -294,14 +294,9 @@ static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
         return NULL;
 
     getMarkupSettings(self, &st);
+      
+    callMarkup(self, (std::string)text, out, st);
     
-    try{    
-        callMarkup(self, (std::string)text, out, st);
-    }
-    catch(std::invalid_argument& e){
-        PyErr_SetString(PyExc_QClassifyError, "Unhandled exception.");
-        return NULL;
-    }
     return PyString_FromString(out.c_str());
     
 }
