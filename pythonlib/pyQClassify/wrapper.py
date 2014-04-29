@@ -41,6 +41,9 @@ class ColorizerAgent(object):
         if not self.configured:
             raise QClassifyError('Colorizer is not configured')
 
+        if isinstance(phrase, unicode):
+            phrase = phrase.encode('utf8')
+
         return self.agent.classifyPhrase(phrase)
     
     def loadConfig(self, path):
@@ -63,6 +66,20 @@ class ColorizerAgent(object):
         if is_unicode:
             marked_text = marked_text.decode('utf8')
         return marked_text
+
+    def firstForm(self, word):
+        is_unicode =False
+
+        if isinstance(word, unicode):
+            is_unicode = True
+            word = word.encode('utf8')
+
+        first_form = self.agent.firstForm(word)
+
+        if is_unicode:
+            first_form = first_form.decode('utf8')
+
+        return first_form
 
     def version(self):
         return self.agent.version()

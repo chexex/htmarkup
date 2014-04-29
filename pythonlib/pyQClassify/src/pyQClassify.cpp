@@ -5,7 +5,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include <stdexcept>
 #include "config/config.hpp"
 #include <Interfaces/cpp/LemInterface.hpp>
 #include "qclassify/qclassify.hpp"
