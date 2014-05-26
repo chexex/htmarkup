@@ -4,7 +4,7 @@ import os
 import re
 from pyQClassify.libpyQClassify import Agent, QClassifyError
 
-class ColorizerAgent(object):   
+class ColorizerAgent(object):
     def __init__(self):
         self.agent = Agent()
 
@@ -35,8 +35,8 @@ class ColorizerAgent(object):
         self.ready = True
         return res
 
-    reinitMarkup = initMarkup    
-    
+    reinitMarkup = initMarkup
+
     def classifyPhrase(self, phrase):
         if not self.configured:
             raise QClassifyError('Colorizer is not configured')
@@ -45,7 +45,7 @@ class ColorizerAgent(object):
             phrase = phrase.encode('utf8')
 
         return self.agent.classifyPhrase(phrase)
-    
+
     def loadConfig(self, path):
         if not os.path.exists(path):
             raise OSError(2, "No such file or directory", path)
@@ -54,18 +54,8 @@ class ColorizerAgent(object):
         self.configured = True
         return res
 
-    def markup(self, text):       
-        is_unicode =False
-        
-        if isinstance(text, unicode):            
-            is_unicode = True
-            text = text.encode('utf8')
-
-        marked_text = self.agent.markup(text)
-
-        if is_unicode:
-            marked_text = marked_text.decode('utf8')
-        return marked_text
+    def markup(self, text):
+        return self.agent.markup(text)
 
     def firstForm(self, word):
         is_unicode =False
