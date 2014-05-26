@@ -50,11 +50,11 @@ int loadConfig(PyObject* self, const char *path) ;
 
 static void PyAgent_dealloc(PyObject* self)
 {
-    if (--(cagent.lem_nrefs) == 0) 
+    if (--(cagent.lem_nrefs) == 0)
     {
         delete cagent.m_pLem;
         cagent.m_pLem = NULL;
-    }  
+    }
 
     self->ob_type->tp_free((PyObject*)self);
 }
@@ -78,7 +78,7 @@ static int PyAgent_init(PyObject *self)
 
     cagent.m_psrch = 0;
 
-    try 
+    try
     {
         if (!cagent.m_pLem )
         {
@@ -86,13 +86,13 @@ static int PyAgent_init(PyObject *self)
             cagent.m_pLem = new LemInterface(true /* UTF8 */);
         }
         cagent.lem_nrefs++;
-    } 
-    catch(...) 
+    }
+    catch(...)
     {
         PyErr_SetString(PyExc_RuntimeError, "Error occured while initializing lemmatizer libraty");
         return -1;
     }
-   
+
     return 0;
 }
 
@@ -104,45 +104,45 @@ static PyMemberDef PyAgent_members[] = {
  /***********************************************************************************************/
  /*                                        C METHODS                                            */
  /***********************************************************************************************/
- 
-int loadConfig(PyObject* self, const char *path) 
+
+int loadConfig(PyObject* self, const char *path)
 {
     cagent.m_psrch = NULL;
-    
-    try 
+
+    try
     {
-        if (!cagent.m_cfg.Load(path)) 
+        if (!cagent.m_cfg.Load(path))
             return ESTATUS_CONFERROR;
-    } 
+    }
     catch(std::exception& ex)
     {
         return ESTATUS_CONFERROR;
     }
-    catch(...) 
+    catch(...)
     {
         return ESTATUS_CONFERROR;
     }
     return ESTATUS_OK;
 }
 
-int index2file(PyObject* self) 
+int index2file(PyObject* self)
 {
-    try 
+    try
     {
-       PhraseCollectionIndexer idx(cagent.m_pLem); 
+       PhraseCollectionIndexer idx(cagent.m_pLem);
        idx.indexByConfig( &(cagent.m_cfg) );
        idx.save();
-    } 
-    catch(...) 
+    }
+    catch(...)
     {
         return ESTATUS_INDEXERROR;
     }
     return ESTATUS_OK;
 }
 
-PhraseSearcher::res_t& searchPhrase(PyObject* self, const char *s) 
+PhraseSearcher::res_t& searchPhrase(PyObject* self, const char *s)
 {
-    if (!cagent.m_psrch) 
+    if (!cagent.m_psrch)
       prepareSearch(self);
 
     cagent.m_req.assign(s);
@@ -150,7 +150,7 @@ PhraseSearcher::res_t& searchPhrase(PyObject* self, const char *s)
     return cagent.m_clsRes;
 }
 
-int initMarkup(PyObject* self) 
+int initMarkup(PyObject* self)
 {
     int ret = prepareSearch(self);
     if (ret != ESTATUS_OK)
@@ -161,32 +161,32 @@ int initMarkup(PyObject* self)
     return ESTATUS_OK;
 }
 
-unsigned callMarkup(PyObject* self, 
-                    const std::string &s, std::string &out, 
-                    const QCHtmlMarker::MarkupSettings &st) 
+unsigned callMarkup(PyObject* self,
+                    const std::string &s, std::string &out,
+                    const QCHtmlMarker::MarkupSettings &st)
 {
     return cagent.m_marker.markup(s, out, st);
 }
 
 
-void getMarkupSettings(PyObject* self, QCHtmlMarker::MarkupSettings *pst) 
+void getMarkupSettings(PyObject* self, QCHtmlMarker::MarkupSettings *pst)
 {
     *pst = cagent.m_marker.getConfigSettings();
 }
 
-void getIndexFileName(PyObject* self, std::string &s) 
+void getIndexFileName(PyObject* self, std::string &s)
 {
     cagent.m_cfg.GetStr("QueryQualifier", "IndexFile", s, "phrases.idx");
 }
 
-int prepareSearch(PyObject* self) 
+int prepareSearch(PyObject* self)
 {
     cagent.m_ldr.setLemmatizer(cagent.m_pLem);
 
-    if (!cagent.m_ldr.loadByConfig( &cagent.m_cfg ) ) 
+    if (!cagent.m_ldr.loadByConfig( &cagent.m_cfg ) )
     {
         return ESTATUS_LOADERROR;
-    }   
+    }
 
     cagent.m_psrch = cagent.m_ldr.getSearcher();
     return ESTATUS_OK;
@@ -219,13 +219,13 @@ static PyObject* PyAgent_loadConfig(PyObject* self, PyObject *args, PyObject *kw
     static char *kwlist[] = {(char *)"path", NULL};
 
     if (! PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &path))
-        return NULL; 
+        return NULL;
 
     if (loadConfig(self, path)) {
         PyErr_SetString(PyExc_QClassifyError, "Unable to load config.");
         return NULL;
     }
-    
+
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -236,7 +236,7 @@ static PyObject* PyAgent_index2file(PyObject* self)
         PyErr_SetString(PyExc_QClassifyError, "Error while call index2file.");
         return NULL;
     }
-    
+
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -265,9 +265,9 @@ static PyObject* PyAgent_classifyPhrase(PyObject* self, PyObject *args, PyObject
         return NULL;
 
     PhraseSearcher::res_t &r = searchPhrase(self, phrase);
-    if (r.size() != 0) 
+    if (r.size() != 0)
     {
-        for(PhraseSearcher::res_t::const_iterator it = r.begin(); it != r.end(); it++) 
+        for(PhraseSearcher::res_t::const_iterator it = r.begin(); it != r.end(); it++)
         {
             res_item = PyTuple_Pack(2, PyString_FromString(it->first.c_str()), PyLong_FromLong(it->second) );
             PyList_Append(res_list, res_item);
@@ -282,43 +282,45 @@ static PyObject* PyAgent_classifyPhrase(PyObject* self, PyObject *args, PyObject
 
 static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
 {
-    QCHtmlMarker::MarkupSettings st;
-    std::string out;
+	QCHtmlMarker::MarkupSettings st;
+	std::string out;
 
-    char* text=NULL;
+	PyObject* input;
+	char* text=NULL;
 
-    static char *kwlist[] = {(char *)"text", NULL};
+	static char *kwlist[] = {(char *)"text", NULL};
 
-    if (! PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &text))
-        return NULL;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "U", kwlist, &input))
+		return NULL;
 
-    getMarkupSettings(self, &st);
-      
-    callMarkup(self, (std::string)text, out, st);
-    
-    return PyString_FromString(out.c_str());
-    
+	input = PyUnicode_AsEncodedString(input, "UTF-8", NULL);
+	text = PyString_AsString(input);
+
+	getMarkupSettings(self, &st);
+	callMarkup(self, (std::string)text, out, st);
+
+	return PyUnicode_FromString(out.c_str());
 }
 
 static PyObject* PyAgent_firstForm(PyObject* self, PyObject *args, PyObject *kwds)
 {
 
-    char* word=NULL;    
+    char* word=NULL;
     std::string out = "";
 
     static char *kwlist[] = {(char *)"word", NULL};
 
     if (! PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &word))
         return NULL;
-    
+
     cagent.m_pLem->FirstForm((std::string)word, &out);
     return PyString_FromString(out.c_str());
 }
 
-static PyMethodDef PyAgent_methods[] = 
+static PyMethodDef PyAgent_methods[] =
 {
-    {"initMarkup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, "Initialize markup"},    
-    {"version", (PyCFunction)PyAgent_version, METH_NOARGS, "C library version"},    
+    {"initMarkup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, "Initialize markup"},
+    {"version", (PyCFunction)PyAgent_version, METH_NOARGS, "C library version"},
     {"loadConfig", (PyCFunction)PyAgent_loadConfig, METH_KEYWORDS, "Loads config from file"},
     {"index2file", (PyCFunction)PyAgent_index2file, METH_NOARGS, "Builds index file"},
     {"getIndexFileName", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path"},
@@ -387,7 +389,7 @@ static PyMethodDef module_functions[] = {
     #define PyMODINIT_FUNC void
 #endif
 
-PyMODINIT_FUNC initlibpyQClassify(void) 
+PyMODINIT_FUNC initlibpyQClassify(void)
 {
     PyObject* module;
 
@@ -400,7 +402,7 @@ PyMODINIT_FUNC initlibpyQClassify(void)
       return;
 
 
-    PyModule_AddObject(module, "QClassifyError", PyExc_QClassifyError);  
+    PyModule_AddObject(module, "QClassifyError", PyExc_QClassifyError);
 
     Py_INCREF((PyObject*)&PyAgentType);
     PyModule_AddObject(module, "Agent", (PyObject *)&PyAgentType);
