@@ -285,16 +285,17 @@ static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
 	QCHtmlMarker::MarkupSettings st;
 	std::string out;
 
-	PyObject* input;
-	char* text=NULL;
+	PyObject* UnicodeInput;
 
 	static char *kwlist[] = {(char *)"text", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "U", kwlist, &input))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "U", kwlist, &UnicodeInput))
 		return NULL;
 
-	input = PyUnicode_AsEncodedString(input, "UTF-8", NULL);
-	text = PyString_AsString(input);
+	PyObject* UTFInput = PyUnicode_AsEncodedString(UnicodeInput, "UTF-8", NULL);
+
+	char* text= PyString_AsString(UTFInput);
+	Py_DECREF(UTFInput);
 
 	getMarkupSettings(self, &st);
 	callMarkup(self, (std::string)text, out, st);
