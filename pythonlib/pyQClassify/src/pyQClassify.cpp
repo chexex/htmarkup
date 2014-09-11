@@ -46,7 +46,8 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 		return NULL;
 	}
 
-	self->config = "bla bla";
+	// std::cout << fname << std::endl;
+	self->config = fname;
 
     return 0;
 }
@@ -97,7 +98,7 @@ static PyTypeObject PyAgentType = {
    PyObject_HEAD_INIT(NULL)
    0,                         /* ob_size */
    "libpyQClassify.Agent",    /* tp_name */
-   sizeof(PyAgent),          /* tp_basicsize */
+   sizeof(PyAgent),           /* tp_basicsize */
    0,                         /* tp_itemsize */
    (destructor)PyAgent_dealloc, /* tp_dealloc */
    0,                         /* tp_print */
@@ -130,7 +131,7 @@ static PyTypeObject PyAgentType = {
    0,                         /* tp_descr_get */
    0,                         /* tp_descr_set */
    0,                         /* tp_dictoffset */
-   (initproc)PyAgent_init,  /* tp_init */
+   (initproc)PyAgent_init,    /* tp_init */
    0,                         /* tp_alloc */
    0,                         /* tp_new */
 };

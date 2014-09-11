@@ -5,7 +5,6 @@ import unittest
 
 
 config_file = '/home/sites/health2.mail.ru/var/colorizer/colorizer.xml'
-config_file = 111
 
 
 class V8TestCase(unittest.TestCase):
