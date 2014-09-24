@@ -4,7 +4,7 @@ import os
 import re
 from pyQClassify.libpyQClassify import Agent, QClassifyError
 
-class ColorizerAgent(object):   
+class ColorizerAgent(object):
     def __init__(self):
         self.agent = Agent()
 
@@ -35,14 +35,17 @@ class ColorizerAgent(object):
         self.ready = True
         return res
 
-    reinitMarkup = initMarkup    
-    
+    reinitMarkup = initMarkup
+
     def classifyPhrase(self, phrase):
         if not self.configured:
             raise QClassifyError('Colorizer is not configured')
 
+        if isinstance(phrase, unicode):
+            phrase = phrase.encode('utf8')
+
         return self.agent.classifyPhrase(phrase)
-    
+
     def loadConfig(self, path):
         if not os.path.exists(path):
             raise OSError(2, "No such file or directory", path)
@@ -52,25 +55,21 @@ class ColorizerAgent(object):
         return res
 
     def markup(self, text):
-        if isinstance(text, str):
-            text = text.decode('utf8')
+        return self.agent.markup(text)
 
-        # escape all non cp1251 symbols (e.q. ß, Ö)
-        text = text.encode('cp1251', 'xmlcharrefreplace').decode('cp1251')
+    def firstForm(self, word):
+        is_unicode =False
 
-        # convert to ascii
-        text = text.encode('utf8')
-        try:
-            marked_text = self.agent.markup(text)
-        except QClassifyError:
-            marked_text = text
+        if isinstance(word, unicode):
+            is_unicode = True
+            word = word.encode('utf8')
 
-        # back to unicode
-        marked_text = marked_text.decode('utf8')
-        
-        # replace non cp1251 symbols
-        result = re.sub('&#(\d+);', lambda m: unichr(int(m.group(1))), marked_text)
-        return result
+        first_form = self.agent.firstForm(word)
+
+        if is_unicode:
+            first_form = first_form.decode('utf8')
+
+        return first_form
 
     def version(self):
         return self.agent.version()

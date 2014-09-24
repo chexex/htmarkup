@@ -28,7 +28,7 @@ extern "C" {
 #include <stdio.h>
 #include <string>
 #include "config/config.hpp"
-#include "lem_interface/lem_interface.hpp"
+#include <Interfaces/cpp/LemInterface.hpp>
 #include "qclassify/qclassify.hpp"
 #include "qclassify/qclassify_impl.hpp"
 #include "qclassify/htmlmark.hpp"
@@ -42,7 +42,7 @@ class QClassifyAgent
 {
   const PhraseSearcher *m_psrch;
   PhraseCollectionLoader m_ldr;
-  static lemInterface *m_pLem;
+  static LemInterface *m_pLem;
   static int lem_nrefs;
   XmlConfig m_cfg;
   std::string m_req;
@@ -60,7 +60,7 @@ public:
     try {
         if (!m_pLem) {
             assert(!lem_nrefs);
-            m_pLem = new lemInterface();
+            m_pLem = new LemInterface(true /* UTF8 */);
         }
         lem_nrefs++;
     } catch(...) {
@@ -158,7 +158,7 @@ private:
   }
 };
 
-lemInterface *QClassifyAgent::m_pLem = NULL;
+LemInterface *QClassifyAgent::m_pLem = NULL;
 int QClassifyAgent::lem_nrefs = 0;
 
 

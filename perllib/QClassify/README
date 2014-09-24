@@ -25,7 +25,7 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  qclassify.a base.a lem_interface.a
+  qclassify.a base.a
 
 COPYRIGHT AND LICENCE
 

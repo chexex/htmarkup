@@ -27,14 +27,14 @@
 namespace gogo
 {
   
-PhraseCollectionLoader::PhraseCollectionLoader(lemInterface *plem /* = NULL */) : 
+PhraseCollectionLoader::PhraseCollectionLoader(LemInterface *plem /* = NULL */) : 
   m_plem(plem), quiet_(false)
 {
   
 }
 
 
-void PhraseCollectionLoader::setLemmatizer(lemInterface *plem) {
+void PhraseCollectionLoader::setLemmatizer(LemInterface *plem) {
   m_plem = plem;
   if (m_psearcher.get()) 
     m_psearcher->setLemmatizer(m_plem);      

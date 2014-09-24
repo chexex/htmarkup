@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "defs.hpp"
-#include "lem_interface/lem_interface.hpp"
+#include <Interfaces/cpp/LemInterface.hpp>
 
 #include "config/config.hpp"
 #include "utils/ptr_array.hpp"
@@ -188,9 +188,9 @@ class PhraseIndexer : public QSerializerOut
     };
   
   public:
-    PhraseIndexer(lemInterface *plem = NULL);
+    PhraseIndexer(LemInterface *plem = NULL);
     virtual ~PhraseIndexer();
-    void setLemmatizer(lemInterface *plem);
+    void setLemmatizer(LemInterface *plem);
     
     //---------------------------------------------------------------------------------
     /// @brief save original phrases
@@ -254,8 +254,8 @@ class PhraseSearcher : public QSerializerIn
     typedef std::map<unsigned, phrase_info> res_cls_num_t; // phrase class ID to phrase_info
     
      
-    PhraseSearcher(lemInterface *plem = NULL);
-    void setLemmatizer(lemInterface *plem);
+    PhraseSearcher(LemInterface *plem = NULL);
+    void setLemmatizer(LemInterface *plem);
     
     /// @brief distribute matched phrase by class IDs
     /// @param phrases vector with matched phrases [in]
@@ -318,8 +318,8 @@ class PhraseCollectionIndexer
   bool quiet_;
   
   public:
-    PhraseCollectionIndexer(lemInterface *plem = NULL);
-    void setLemmatizer(lemInterface *plem);
+    PhraseCollectionIndexer(LemInterface *plem = NULL);
+    void setLemmatizer(LemInterface *plem);
     
     void indexByConfig(const XmlConfig *pcfg);
     void addFile(unsigned cls, std::istream &is);
@@ -340,13 +340,13 @@ class PhraseCollectionLoader
   std::auto_ptr<QCIndexReader> m_qcreader;
   FileMemHolder m_idxfile;
   
-  lemInterface   *m_plem;
+  LemInterface   *m_plem;
   PhraseSearcher m_emptySearcher;
   bool quiet_;
   
   public:
-    PhraseCollectionLoader(lemInterface *plem = NULL);
-    void setLemmatizer(lemInterface *plem);
+    PhraseCollectionLoader(LemInterface *plem = NULL);
+    void setLemmatizer(LemInterface *plem);
     
     bool loadFile(const char *path, bool bmmap = false, bool bmlock = false);
     bool loadByConfig(const XmlConfig *pcfg);

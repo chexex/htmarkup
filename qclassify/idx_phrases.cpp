@@ -60,10 +60,10 @@ main(int argc, char *argv[])
     
     try {
       XmlConfig cfg(cfgfile.c_str());
-      lemInterface *plem;
+      LemInterface *plem;
       
       if (bUseLemm && cfg.GetBool("QueryQualifier", "UseLemmatizer", true)) {
-        plem = new lemInterface();
+        plem = new LemInterface(true /* UTF8 */);
       } else {
         plem = NULL;
       }

@@ -57,13 +57,13 @@ int main(int argc, char *argv[])
         usage();
   }
   
-  lemInterface *plem = NULL;
+  LemInterface *plem = NULL;
   
   try {
     XmlConfig cfg(cfgfile.c_str());
     
     if (bUseLemm && cfg.GetBool("QueryQualifier", "UseLemmatizer", true))
-      plem = new lemInterface;
+      plem = new LemInterface(true /* UTF8 */);
       
     PhraseCollectionLoader ldr(plem);
     ldr.loadByConfig(&cfg);

@@ -23,7 +23,7 @@
 
 #include "config/config.hpp"
 #include "utils/syserror.hpp"
-#include "lem_interface/lem_interface.hpp"
+#include <Interfaces/cpp/LemInterface.hpp>
 #include "qclassify/qclassify.hpp"
 #include "qclassify/htmlmark.hpp"
 
@@ -90,11 +90,11 @@ main(int argc, char *argv[])
   
   try 
   {
-    auto_ptr<lemInterface> plem;
+    auto_ptr<LemInterface> plem;
     XmlConfig cfg(cfg_path);
     
     if (!nolemm || cfg.GetBool("QueryQualifier", "UseLemmatizer", true))
-      plem.reset(new lemInterface);
+      plem.reset(new LemInterface(true /* UTF8 */));
     
     PhraseCollectionLoader ldr(plem.get());
     if (!ldr.loadByConfig(&cfg)) {
