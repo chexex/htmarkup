@@ -1,0 +1,99 @@
+diff --git a/Lib/python/pystrings.swg b/Lib/python/pystrings.swg
+index 2b14547..a3b88e6 100644
+--- a/Lib/python/pystrings.swg
++++ b/Lib/python/pystrings.swg
+@@ -8,24 +8,27 @@ SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc)
+ %#if PY_VERSION_HEX>=0x03000000
+   if (PyUnicode_Check(obj))
+ %#else  
+-  if (PyString_Check(obj))
++  if (PyUnicode_Check(obj) || PyString_Check(obj))
+ %#endif
+   {
+     char *cstr; Py_ssize_t len;
+-%#if PY_VERSION_HEX>=0x03000000
+-    if (!alloc && cptr) {
++    PyObject *newobj = NULL;
++    if (PyUnicode_Check(obj))
++    {
++      if (!alloc && cptr) {
+         /* We can't allow converting without allocation, since the internal
+            representation of string in Python 3 is UCS-2/UCS-4 but we require
+            a UTF-8 representation.
+            TODO(bhy) More detailed explanation */
+         return SWIG_RuntimeError;
++      }
++      newobj = obj = PyUnicode_AsUTF8String(obj);
++      PyBytes_AsStringAndSize(obj, &cstr, &len);
++      if(alloc) *alloc = SWIG_NEWOBJ;
+     }
+-    obj = PyUnicode_AsUTF8String(obj);
+-    PyBytes_AsStringAndSize(obj, &cstr, &len);
+-    if(alloc) *alloc = SWIG_NEWOBJ;
+-%#else
+-    PyString_AsStringAndSize(obj, &cstr, &len);
+-%#endif
++    else
++      PyString_AsStringAndSize(obj, &cstr, &len);
++
+     if (cptr) {
+       if (alloc) {
+ 	/* 
+@@ -58,9 +61,7 @@ SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc)
+       }
+     }
+     if (psize) *psize = len + 1;
+-%#if PY_VERSION_HEX>=0x03000000
+-    Py_XDECREF(obj);
+-%#endif
++    Py_XDECREF(newobj);
+     return SWIG_OK;
+   } else {
+     swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+@@ -104,4 +105,32 @@ SWIG_FromCharPtrAndSize(const char* carray, size_t size)
+ }
+ }
+ 
+-
++%fragment("SWIG_FromUTF8CharPtrAndSize","header",fragment="SWIG_pchar_descriptor") {
++SWIGINTERNINLINE PyObject *
++SWIG_FromUTF8CharPtrAndSize(const char* carray, size_t size)
++{
++  if (carray) {
++    if (size > INT_MAX) {
++      swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
++      return pchar_descriptor ?
++   SWIG_InternalNewPointerObj(%const_cast(carray,char *), pchar_descriptor, 0) : SWIG_Py_Void();
++    } else {
++%#if PY_VERSION_HEX >= 0x03000000
++      return PyUnicode_FromStringAndSize(carray, %numeric_cast(size,int));
++%#else
++      {
++        const unsigned char *ucp = (const unsigned char *)carray;
++        size_t i;
++        for (i = 0; i < size; ++i) {
++          if (ucp[i] >= 0x80) /* UTF-8? */
++            return PyUnicode_FromStringAndSize(carray, %numeric_cast(size,int));
++        }
++        return PyString_FromStringAndSize(carray, %numeric_cast(size,int));
++      }
++%#endif
++    }
++  } else {
++    return SWIG_Py_Void();
++  }
++}
++}
+diff --git a/Lib/typemaps/std_string.swg b/Lib/typemaps/std_string.swg
+index 5b57bea..b8104b1 100644
+--- a/Lib/typemaps/std_string.swg
++++ b/Lib/typemaps/std_string.swg
+@@ -16,7 +16,7 @@ namespace std
+   class string;
+ }
+ 
+-%typemaps_std_string(std::string, char, SWIG_AsCharPtrAndSize, SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
++%typemaps_std_string(std::string, char, SWIG_AsCharPtrAndSize, SWIG_FromUTF8CharPtrAndSize, %checkcode(STDSTRING));
+ 
+ #else
+ 
