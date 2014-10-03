@@ -12,31 +12,43 @@
 
 using namespace gogo;
 
-#define ESTATUS_OK          0
-#define ESTATUS_CONFERROR   1
-#define ESTATUS_INITERROR   2
 #define ESTATUS_INDEXERROR  3
 #define ESTATUS_LOADERROR   4
 
-// typedef struct {
-//     const PhraseSearcher *m_psrch;
-//     PhraseCollectionLoader m_ldr;
-//     static LemInterface *m_pLem;
-//     static int lem_nrefs;
-//     XmlConfig m_cfg;
-//     std::string m_req;
-//     QCHtmlMarker m_marker;
-//     PhraseSearcher::res_t m_clsRes;
-// } CAgent;
+typedef struct {
+    const PhraseSearcher *m_psrch;
+    // PhraseCollectionLoader m_ldr;
+    const LemInterface *m_pLem;
+    // std::string m_req;
+    // QCHtmlMarker m_marker;
+    // PhraseSearcher::res_t m_clsRes;
+} CAgent;
 
 typedef struct {
 	PyObject_HEAD
 	const char* config;
+	bool configured;
+	bool ready;
+	// CAgent cagent;
+    XmlConfig m_cfg;
 } PyAgent;
 
 static PyObject* PyExc_QClassifyError;
 
-
+int loadConfig(PyAgent* self, const char *path) {
+	try {
+		// if (!self->cagent.m_cfg->Load(path)) {
+			return 0;
+		// }
+	}
+	catch(std::exception& ex) {
+		return 0;
+	}
+	catch(...) {
+		return 0;
+	}
+	return 1;
+}
 
 static int PyAgent_init(PyAgent *self, PyObject *args) {
 
@@ -48,11 +60,33 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 
 	// std::cout << fname << std::endl;
 	self->config = fname;
+	self->configured = 0;
+	self->ready = 0;
+
+	// init lemmatizer
+	// self->cagent.m_psrch = NULL;
+    // try {
+	// 	self->cagent.m_pLem = new LemInterface(true /* UTF8 */);
+    // }
+    // catch(...) {
+    //     PyErr_SetString(PyExc_QClassifyError, "Error occured while initializing lemmatizer library");
+    //     return -1;
+    // }
+
+	// self->m_cfg.Load(fname);
+
+	// load config
+    // if (!loadConfig(self, fname)) {
+    //     PyErr_SetString(PyExc_QClassifyError, "Unable to load config.");
+    //     return -1;
+    // }
 
     return 0;
 }
 
 static void PyAgent_dealloc(PyAgent* self) {
+	// delete self->cagent.m_pLem;
+	// self->cagent.m_pLem = NULL;
 	self->ob_type->tp_free((PyObject*)self);
 }
 
@@ -72,25 +106,32 @@ static PyObject* PyAgent_markup(PyAgent* self, PyObject *args, PyObject *kwds) {
 	return PyUnicode_FromString(text);
 }
 
+static PyObject* PyAgent_getIndexFileName(PyAgent* self) {
+    std::string s;
+    self->m_cfg.GetStr("QueryQualifier", "IndexFile", s, "phrases.idx");
+    return PyString_FromString(s.c_str());
+}
+
+
 static PyObject* PyAgent_version(PyAgent* self) {
     return PyInt_FromLong(qcls_impl::QCLASSIFY_INDEX_VERSION);
 }
 
 static PyMethodDef PyAgent_methods[] =
 {
+    {"markup", (PyCFunction)PyAgent_markup, METH_KEYWORDS, "Markup text"},
+    {"get_index_file_name", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path"},
     // {"initMarkup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, "Initialize markup"},
     {"version", (PyCFunction)PyAgent_version, METH_NOARGS, "C library version"},
     // {"loadConfig", (PyCFunction)PyAgent_loadConfig, METH_KEYWORDS, "Loads config from file"},
     // {"index2file", (PyCFunction)PyAgent_index2file, METH_NOARGS, "Builds index file"},
-    // {"getIndexFileName", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path"},
     // {"classifyPhrase", (PyCFunction)PyAgent_classifyPhrase, METH_KEYWORDS, ""},
-    {"markup", (PyCFunction)PyAgent_markup, METH_KEYWORDS, "Markup text"},
     // {"firstForm", (PyCFunction)PyAgent_firstForm, METH_KEYWORDS, "Return first form of given keyword"},
     { NULL,  NULL, 0, NULL }  /* Sentinel */
 };
 
 static PyMemberDef PyAgent_members[] = {
-	{ "config", T_STRING, offsetof(PyAgent, config), 0, "Config file" },
+	// { "config", T_STRING, offsetof(PyAgent, config), 0, "Config file" },
     { NULL, 0, 0, 0, NULL }  /* Sentinel */
 };
 
