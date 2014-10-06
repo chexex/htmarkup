@@ -1,8 +1,12 @@
 #-*- coding: utf-8 -*-
 
 import os
-import re
 from pyQClassify.libpyQClassify import Agent, QClassifyError
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 
 class ColorizerAgent(object):
     def __init__(self):
@@ -55,10 +59,14 @@ class ColorizerAgent(object):
         return res
 
     def markup(self, text):
-        return self.agent.markup(text)
+        try:
+            return self.agent.markup(text)
+        except QClassifyError, e:
+            logger.error(e)
+            return text
 
     def firstForm(self, word):
-        is_unicode =False
+        is_unicode = False
 
         if isinstance(word, unicode):
             is_unicode = True
