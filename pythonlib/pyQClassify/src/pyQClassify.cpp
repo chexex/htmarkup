@@ -298,7 +298,14 @@ static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
 	Py_DECREF(UTFInput);
 
 	getMarkupSettings(self, &st);
-	callMarkup(self, (std::string)text, out, st);
+
+	try {
+		callMarkup(self, (std::string)text, out, st);
+	}
+	catch(...) {
+		PyErr_SetString(PyExc_QClassifyError, "Unable to markup text.");
+		return NULL;
+	}
 
 	return PyUnicode_FromString(out.c_str());
 }
