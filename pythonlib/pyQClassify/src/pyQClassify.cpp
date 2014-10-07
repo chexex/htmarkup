@@ -295,7 +295,6 @@ static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
 	PyObject* UTFInput = PyUnicode_AsEncodedString(UnicodeInput, "UTF-8", NULL);
 
 	char* text= PyString_AsString(UTFInput);
-	Py_DECREF(UTFInput);
 
 	getMarkupSettings(self, &st);
 
@@ -304,9 +303,11 @@ static PyObject* PyAgent_markup(PyObject* self, PyObject *args, PyObject *kwds)
 	}
 	catch(...) {
 		PyErr_SetString(PyExc_QClassifyError, "Unable to markup text.");
+		Py_DECREF(UTFInput);
 		return NULL;
 	}
 
+	Py_DECREF(UTFInput);
 	return PyUnicode_FromString(out.c_str());
 }
 
