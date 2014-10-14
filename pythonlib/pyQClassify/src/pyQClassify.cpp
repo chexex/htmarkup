@@ -22,15 +22,16 @@ typedef struct {
 	bool configured;
 	bool ready;
 
-    // const PhraseSearcher *m_psrch;
+    const PhraseSearcher *m_psrch;
 	// PhraseCollectionLoader m_ldr;
-    // LemInterface *m_pLem;
-	// static int lem_nrefs;
+    static LemInterface *m_pLem;
     XmlConfig* m_cfg;
     // std::string m_req;
 	// QCHtmlMarker m_marker;
 	// PhraseSearcher::res_t m_clsRes;
 } PyAgent;
+
+LemInterface *PyAgent::m_pLem = NULL;
 
 static PyObject* PyExc_QClassifyError;
 
@@ -48,17 +49,18 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 	self->configured = 0;
 	self->ready = 0;
 
-	// init lemmatizer
-	// self->m_psrch = NULL;
-    // try {
-	// 	self->m_pLem = new LemInterface(true /* UTF8 */);
-    // }
-    // catch(...) {
-    //     PyErr_SetString(PyExc_QClassifyError, "Error occured while initializing lemmatizer library");
-    //     return -1;
-    // }
+	try {
+		if (!self->m_pLem){
+			self->m_pLem = new LemInterface(true /* UTF8 */);
+			fprintf(stderr, "%s\n", "INIT!!");
+		}
+	}
+	catch(...){
+		PyErr_SetString(PyExc_QClassifyError, "liblemmatizer can not be initialized");
+		return -1;
+	}
 
-	// self->m_psrch = new PhraseSearcher();
+	self->m_psrch = new PhraseSearcher();
 	self->m_cfg = new XmlConfig();
 
 	try {
@@ -76,8 +78,8 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 }
 
 static void PyAgent_dealloc(PyAgent* self) {
-	// delete self->m_pLem;
-	// self->m_pLem = NULL;
+	delete self->m_psrch;
+	self->m_psrch = NULL;
 	delete self->m_cfg;
 	self->m_cfg = NULL;
 	self->ob_type->tp_free((PyObject*)self);
