@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from pyQClassify.libpyQClassify import Agent
+from pyQClassify.libpyQClassify import Agent, QClassifyError
 import unittest
 
 
@@ -13,14 +13,17 @@ class AgentTestCase(unittest.TestCase):
     def setUp(self):
         self.colorizer = Agent(config_file)
 
+    def test_wrong_config(self):
+        self.assertRaises(QClassifyError, Agent, '/tmp/non_exists.xml')
+
     def test_version(self):
         self.assertEqual(10, self.colorizer.version())
 
     def test_config(self):
         self.assertEqual(config_file, self.colorizer.config)
 
-    def test_index_filename(self):
-        self.assertEqual(index_file, self.colorizer.get_index_file_name())
+    def test_get_index(self):
+        self.assertEqual(index_file, self.colorizer.get_index())
 
     def test_markup(self):
         self.assertEqual(u'foo', self.colorizer.markup(u'foo'))

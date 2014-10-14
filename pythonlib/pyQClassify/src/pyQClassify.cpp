@@ -16,39 +16,23 @@ using namespace gogo;
 #define ESTATUS_LOADERROR   4
 
 typedef struct {
-    const PhraseSearcher *m_psrch;
-    // PhraseCollectionLoader m_ldr;
-    const LemInterface *m_pLem;
-    // std::string m_req;
-    // QCHtmlMarker m_marker;
-    // PhraseSearcher::res_t m_clsRes;
-} CAgent;
-
-typedef struct {
 	PyObject_HEAD
+
 	const char* config;
 	bool configured;
 	bool ready;
-	// CAgent cagent;
-    XmlConfig m_cfg;
+
+    // const PhraseSearcher *m_psrch;
+	// PhraseCollectionLoader m_ldr;
+    // LemInterface *m_pLem;
+	// static int lem_nrefs;
+    XmlConfig* m_cfg;
+    // std::string m_req;
+	// QCHtmlMarker m_marker;
+	// PhraseSearcher::res_t m_clsRes;
 } PyAgent;
 
 static PyObject* PyExc_QClassifyError;
-
-int loadConfig(PyAgent* self, const char *path) {
-	try {
-		// if (!self->cagent.m_cfg->Load(path)) {
-			return 0;
-		// }
-	}
-	catch(std::exception& ex) {
-		return 0;
-	}
-	catch(...) {
-		return 0;
-	}
-	return 1;
-}
 
 static int PyAgent_init(PyAgent *self, PyObject *args) {
 
@@ -58,35 +42,43 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 		return NULL;
 	}
 
-	// std::cout << fname << std::endl;
+	// fprintf(stderr, "%s\n", fname);
+
 	self->config = fname;
 	self->configured = 0;
 	self->ready = 0;
 
 	// init lemmatizer
-	// self->cagent.m_psrch = NULL;
+	// self->m_psrch = NULL;
     // try {
-	// 	self->cagent.m_pLem = new LemInterface(true /* UTF8 */);
+	// 	self->m_pLem = new LemInterface(true /* UTF8 */);
     // }
     // catch(...) {
     //     PyErr_SetString(PyExc_QClassifyError, "Error occured while initializing lemmatizer library");
     //     return -1;
     // }
 
-	// self->m_cfg.Load(fname);
+	self->m_cfg = new(&self->m_cfg) XmlConfig();
 
-	// load config
-    // if (!loadConfig(self, fname)) {
-    //     PyErr_SetString(PyExc_QClassifyError, "Unable to load config.");
-    //     return -1;
-    // }
+	try {
+		if (!self->m_cfg->Load(fname)) {
+			PyErr_SetString(PyExc_QClassifyError, "Unable to load config.");
+			return -1;
+		}
+	}
+	catch(...) {
+		PyErr_SetString(PyExc_QClassifyError, "Unknown error while loading config file");
+		return -1;
+	}
 
     return 0;
 }
 
 static void PyAgent_dealloc(PyAgent* self) {
-	// delete self->cagent.m_pLem;
-	// self->cagent.m_pLem = NULL;
+	// delete self->m_pLem;
+	// self->m_pLem = NULL;
+	// delete self->m_cfg;
+	// self->m_cfg = NULL;
 	self->ob_type->tp_free((PyObject*)self);
 }
 
@@ -108,7 +100,7 @@ static PyObject* PyAgent_markup(PyAgent* self, PyObject *args, PyObject *kwds) {
 
 static PyObject* PyAgent_getIndexFileName(PyAgent* self) {
     std::string s;
-    self->m_cfg.GetStr("QueryQualifier", "IndexFile", s, "phrases.idx");
+    self->m_cfg->GetStr("QueryQualifier", "IndexFile", s, "phrases.idx");
     return PyString_FromString(s.c_str());
 }
 
@@ -120,7 +112,7 @@ static PyObject* PyAgent_version(PyAgent* self) {
 static PyMethodDef PyAgent_methods[] =
 {
     {"markup", (PyCFunction)PyAgent_markup, METH_KEYWORDS, "Markup text"},
-    {"get_index_file_name", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path"},
+    {"get_index", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path"},
     // {"initMarkup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, "Initialize markup"},
     {"version", (PyCFunction)PyAgent_version, METH_NOARGS, "C library version"},
     // {"loadConfig", (PyCFunction)PyAgent_loadConfig, METH_KEYWORDS, "Loads config from file"},
@@ -131,7 +123,7 @@ static PyMethodDef PyAgent_methods[] =
 };
 
 static PyMemberDef PyAgent_members[] = {
-	// { "config", T_STRING, offsetof(PyAgent, config), 0, "Config file" },
+	{ "config", T_STRING, offsetof(PyAgent, config), 0, "Config file" },
     { NULL, 0, 0, 0, NULL }  /* Sentinel */
 };
 
