@@ -58,7 +58,8 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
     //     return -1;
     // }
 
-	self->m_cfg = new(&self->m_cfg) XmlConfig();
+	// self->m_psrch = new PhraseSearcher();
+	self->m_cfg = new XmlConfig();
 
 	try {
 		if (!self->m_cfg->Load(fname)) {
@@ -77,8 +78,8 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 static void PyAgent_dealloc(PyAgent* self) {
 	// delete self->m_pLem;
 	// self->m_pLem = NULL;
-	// delete self->m_cfg;
-	// self->m_cfg = NULL;
+	delete self->m_cfg;
+	self->m_cfg = NULL;
 	self->ob_type->tp_free((PyObject*)self);
 }
 
