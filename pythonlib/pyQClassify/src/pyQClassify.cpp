@@ -71,18 +71,19 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 		return -1;
 	}
 
-	// prepare search
 	self->m_ldr = new PhraseCollectionLoader();
+	self->m_psrch = new PhraseSearcher();
+	self->m_marker = new QCHtmlMarker();
+
+	// prepare search
 	self->m_ldr->setLemmatizer(self->m_pLem);
 	if (!self->m_ldr->loadByConfig(self->m_cfg)) {
 		PyErr_SetString(PyExc_QClassifyError, "Unable to load PhraseCollectionLoader config");
 		return -1;
 	}
-	self->m_psrch = new PhraseSearcher();
 	self->m_psrch = self->m_ldr->getSearcher();
 
 	// init markup
-	self->m_marker = new QCHtmlMarker();
 	self->m_marker->setPhraseSearcher(self->m_psrch);
 	self->m_marker->loadSettings(self->m_cfg);
 
@@ -93,14 +94,15 @@ static void PyAgent_dealloc(PyAgent* self) {
 	delete self->m_cfg;
 	self->m_cfg = NULL;
 
-	delete self->m_ldr;
-	self->m_ldr = NULL;
-
 	delete self->m_marker;
 	self->m_marker = NULL;
 
-	// delete self->m_psrch;
+	// TODO: надо как-то удалять их не одновременно
+	delete self->m_psrch;
 	self->m_psrch = NULL;
+
+	// delete self->m_ldr;
+	// self->m_ldr = NULL;
 
 	self->ob_type->tp_free((PyObject*)self);
 }
@@ -135,6 +137,23 @@ static PyObject* PyAgent_markup(PyAgent* self, PyObject *args, PyObject *kwds) {
 
 }
 
+static PyObject* PyAgent_index2file(PyAgent* self) {
+	try {
+		PhraseCollectionIndexer idx(self->m_pLem);
+		idx.indexByConfig(self->m_cfg);
+		idx.save();
+	}
+	catch (...) {
+		PyErr_SetString(PyExc_QClassifyError, "Indexing error");
+		return NULL;
+	}
+
+	// TODO: call init markup
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+
 static PyObject* PyAgent_getIndexFileName(PyAgent* self) {
 	std::string s;
 	self->m_cfg->GetStr("QueryQualifier", "IndexFile", s, "phrases.idx");
@@ -153,7 +172,7 @@ static PyMethodDef PyAgent_methods[] =
     // {"init_markup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, "Initialize markup"},
     {"version", (PyCFunction)PyAgent_version, METH_NOARGS, "C library version"},
     // {"loadConfig", (PyCFunction)PyAgent_loadConfig, METH_KEYWORDS, "Loads config from file"},
-    // {"index2file", (PyCFunction)PyAgent_index2file, METH_NOARGS, "Builds index file"},
+    {"index2file", (PyCFunction)PyAgent_index2file, METH_NOARGS, "Builds index file"},
     // {"classifyPhrase", (PyCFunction)PyAgent_classifyPhrase, METH_KEYWORDS, ""},
     // {"firstForm", (PyCFunction)PyAgent_firstForm, METH_KEYWORDS, "Return first form of given keyword"},
     { NULL,  NULL, 0, NULL }  /* Sentinel */
