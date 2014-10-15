@@ -26,7 +26,7 @@ class AgentTestCase(unittest.TestCase):
         self.assertEqual(index_file, self.colorizer.get_index())
 
     def test_markup(self):
-        self.assertEqual(u'foo', self.colorizer.markup(u'foo'))
+        self.assertEqual(u'<a href="/drug/rubric/A06/">Слабительное</a>', self.colorizer.markup(u'Слабительное'))
 
     def test_instances(self):
         Agent(config_file)

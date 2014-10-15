@@ -12,9 +12,6 @@
 
 using namespace gogo;
 
-#define ESTATUS_INDEXERROR  3
-#define ESTATUS_LOADERROR   4
-
 typedef struct {
 	PyObject_HEAD
 
@@ -23,17 +20,18 @@ typedef struct {
 	bool ready;
 
     const PhraseSearcher *m_psrch;
-	// PhraseCollectionLoader m_ldr;
+	PhraseCollectionLoader *m_ldr;
     static LemInterface *m_pLem;
     XmlConfig* m_cfg;
     // std::string m_req;
-	// QCHtmlMarker m_marker;
+	QCHtmlMarker *m_marker;
 	// PhraseSearcher::res_t m_clsRes;
 } PyAgent;
 
 LemInterface *PyAgent::m_pLem = NULL;
 
 static PyObject* PyExc_QClassifyError;
+
 
 static int PyAgent_init(PyAgent *self, PyObject *args) {
 
@@ -60,9 +58,8 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 		return -1;
 	}
 
-	self->m_psrch = new PhraseSearcher();
+	// load config
 	self->m_cfg = new XmlConfig();
-
 	try {
 		if (!self->m_cfg->Load(fname)) {
 			PyErr_SetString(PyExc_QClassifyError, "Unable to load config.");
@@ -74,18 +71,44 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 		return -1;
 	}
 
-    return 0;
+	// prepare search
+	self->m_ldr = new PhraseCollectionLoader();
+	self->m_ldr->setLemmatizer(self->m_pLem);
+	if (!self->m_ldr->loadByConfig(self->m_cfg)) {
+		PyErr_SetString(PyExc_QClassifyError, "Unable to load PhraseCollectionLoader config");
+		return -1;
+	}
+	self->m_psrch = new PhraseSearcher();
+	self->m_psrch = self->m_ldr->getSearcher();
+
+	// init markup
+	self->m_marker = new QCHtmlMarker();
+	self->m_marker->setPhraseSearcher(self->m_psrch);
+	self->m_marker->loadSettings(self->m_cfg);
+
+	return 0;
 }
 
 static void PyAgent_dealloc(PyAgent* self) {
-	delete self->m_psrch;
-	self->m_psrch = NULL;
 	delete self->m_cfg;
 	self->m_cfg = NULL;
+
+	delete self->m_ldr;
+	self->m_ldr = NULL;
+
+	delete self->m_marker;
+	self->m_marker = NULL;
+
+	// delete self->m_psrch;
+	self->m_psrch = NULL;
+
 	self->ob_type->tp_free((PyObject*)self);
 }
 
+
 static PyObject* PyAgent_markup(PyAgent* self, PyObject *args, PyObject *kwds) {
+	std::string out;
+
 	PyObject* UnicodeInput;
 
 	static char *kwlist[] = {(char *)"text", NULL};
@@ -96,15 +119,26 @@ static PyObject* PyAgent_markup(PyAgent* self, PyObject *args, PyObject *kwds) {
 	PyObject* UTFInput = PyUnicode_AsEncodedString(UnicodeInput, "UTF-8", NULL);
 
 	char* text= PyString_AsString(UTFInput);
-	Py_DECREF(UTFInput);
 
-	return PyUnicode_FromString(text);
+	QCHtmlMarker::MarkupSettings st = self->m_marker->getConfigSettings();
+	try {
+		self->m_marker->markup((std::string)text, out, st);
+	}
+	catch(...) {
+		PyErr_SetString(PyExc_QClassifyError, "Unable to markup text.");
+		Py_DECREF(UTFInput);
+		return NULL;
+	}
+
+	Py_DECREF(UTFInput);
+	return PyUnicode_FromString(out.c_str());
+
 }
 
 static PyObject* PyAgent_getIndexFileName(PyAgent* self) {
-    std::string s;
-    self->m_cfg->GetStr("QueryQualifier", "IndexFile", s, "phrases.idx");
-    return PyString_FromString(s.c_str());
+	std::string s;
+	self->m_cfg->GetStr("QueryQualifier", "IndexFile", s, "phrases.idx");
+	return PyString_FromString(s.c_str());
 }
 
 
@@ -116,7 +150,7 @@ static PyMethodDef PyAgent_methods[] =
 {
     {"markup", (PyCFunction)PyAgent_markup, METH_KEYWORDS, "Markup text"},
     {"get_index", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path"},
-    // {"initMarkup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, "Initialize markup"},
+    // {"init_markup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, "Initialize markup"},
     {"version", (PyCFunction)PyAgent_version, METH_NOARGS, "C library version"},
     // {"loadConfig", (PyCFunction)PyAgent_loadConfig, METH_KEYWORDS, "Loads config from file"},
     // {"index2file", (PyCFunction)PyAgent_index2file, METH_NOARGS, "Builds index file"},
