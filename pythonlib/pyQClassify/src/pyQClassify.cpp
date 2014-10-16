@@ -16,18 +16,39 @@ typedef struct {
 	PyObject_HEAD
 
 	const char* config;
-	// bool configured;
-	// bool ready;
+	bool is_initialized;
 
 	const PhraseSearcher *m_psrch;
-	PhraseCollectionLoader *m_ldr;
 	XmlConfig* m_cfg;
+	PhraseCollectionLoader *m_ldr;
 	QCHtmlMarker *m_marker;
 } PyAgent;
 
 static LemInterface* m_pLem = NULL;
 
 static PyObject* PyExc_QClassifyError;
+
+
+void initMarkup(PyAgent* self) {
+	/* Dependencies:
+		m_ldr <- m_pLem, m_cfg
+		m_psrch <- m_ldr
+		m_marker <- m_psrch, m_cfg */
+
+	// prepare search
+	self->m_ldr->setLemmatizer(m_pLem);
+	if (!self->m_ldr->loadByConfig(self->m_cfg)) {
+		self->is_initialized = 0;
+		return;
+	}
+	self->m_psrch = self->m_ldr->getSearcher();
+
+	// init markup
+	self->m_marker->setPhraseSearcher(self->m_psrch);
+	self->m_marker->loadSettings(self->m_cfg);
+
+	self->is_initialized = 1;
+}
 
 
 static int PyAgent_init(PyAgent *self, PyObject *args) {
@@ -41,9 +62,11 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 	// fprintf(stderr, "%s\n", fname);
 
 	self->config = fname;
-	// TODO: not used
-	// self->configured = 0;
-	// self->ready = 0;
+	self->is_initialized = 0;
+
+	self->m_cfg = new XmlConfig();
+	self->m_ldr = new PhraseCollectionLoader();
+	self->m_marker = new QCHtmlMarker();
 
 	try {
 		if (!m_pLem){
@@ -56,7 +79,6 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 	}
 
 	// load config
-	self->m_cfg = new XmlConfig();
 	try {
 		if (!self->m_cfg->Load(fname)) {
 			PyErr_SetString(PyExc_QClassifyError, "Unable to load config.");
@@ -68,28 +90,7 @@ static int PyAgent_init(PyAgent *self, PyObject *args) {
 		return -1;
 	}
 
-	self->m_ldr = new PhraseCollectionLoader();
-	self->m_marker = new QCHtmlMarker();
-
-	// prepare search
-	self->m_ldr->setLemmatizer(m_pLem);
-	if (!self->m_ldr->loadByConfig(self->m_cfg)) {
-		PyErr_SetString(PyExc_QClassifyError, "Unable to load PhraseCollectionLoader config");
-		return -1;
-	}
-	self->m_psrch = self->m_ldr->getSearcher();
-
-	// init markup
-	self->m_marker->setPhraseSearcher(self->m_psrch);
-	self->m_marker->loadSettings(self->m_cfg);
-
-	/*
-	Dependencies:
-		m_ldr <- m_pLem, m_cfg
-		m_psrch <- m_ldr
-		m_marker <- m_psrch, m_cfg
-	*/
-
+	initMarkup(self);
 	return 0;
 }
 
@@ -108,6 +109,11 @@ static void PyAgent_dealloc(PyAgent* self) {
 
 
 static PyObject* PyAgent_markup(PyAgent* self, PyObject *args, PyObject *kwds) {
+	if (!self->is_initialized) {
+		PyErr_SetString(PyExc_QClassifyError, "Unable to load PhraseCollectionLoader config");
+		return NULL;
+	}
+
 	std::string out;
 
 	PyObject* UnicodeInput;
@@ -126,7 +132,7 @@ static PyObject* PyAgent_markup(PyAgent* self, PyObject *args, PyObject *kwds) {
 		self->m_marker->markup((std::string)text, out, st);
 	}
 	catch(...) {
-		PyErr_SetString(PyExc_QClassifyError, "Unable to markup text.");
+		PyErr_SetString(PyExc_QClassifyError, "Unable to markup text");
 		Py_DECREF(UTFInput);
 		return NULL;
 	}
@@ -147,7 +153,8 @@ static PyObject* PyAgent_index2file(PyAgent* self) {
 		return NULL;
 	}
 
-	// TODO: call init markup
+	initMarkup(self);
+
 	Py_INCREF(Py_None);
 	return Py_None;
 }
@@ -166,14 +173,10 @@ static PyObject* PyAgent_version(PyAgent* self) {
 
 static PyMethodDef PyAgent_methods[] =
 {
-	{"markup", (PyCFunction)PyAgent_markup, METH_KEYWORDS, "Markup text"},
-	{"get_index", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path"},
-	// {"init_markup", (PyCFunction)PyAgent_initMarkup, METH_NOARGS, "Initialize markup"},
-	{"version", (PyCFunction)PyAgent_version, METH_NOARGS, "C library version"},
-	// {"loadConfig", (PyCFunction)PyAgent_loadConfig, METH_KEYWORDS, "Loads config from file"},
-	{"index2file", (PyCFunction)PyAgent_index2file, METH_NOARGS, "Builds index file"},
-	// {"classifyPhrase", (PyCFunction)PyAgent_classifyPhrase, METH_KEYWORDS, ""},
-	// {"firstForm", (PyCFunction)PyAgent_firstForm, METH_KEYWORDS, "Return first form of given keyword"},
+	{ "markup", (PyCFunction)PyAgent_markup, METH_KEYWORDS, "Markup text" },
+	{ "index2file", (PyCFunction)PyAgent_index2file, METH_NOARGS, "Builds index file" },
+	{ "get_index", (PyCFunction)PyAgent_getIndexFileName, METH_NOARGS, "Index file path" },
+	{ "version", (PyCFunction)PyAgent_version, METH_NOARGS, "C library version" },
 	{ NULL,  NULL, 0, NULL }  /* Sentinel */
 };
 
@@ -185,7 +188,7 @@ static PyMemberDef PyAgent_members[] = {
 static PyTypeObject PyAgentType = {
 	PyObject_HEAD_INIT(NULL)
 	0,                         /* ob_size */
-	"libpyQClassify.Agent",    /* tp_name */
+	"QClassifyAgent",          /* tp_name */
 	sizeof(PyAgent),           /* tp_basicsize */
 	0,                         /* tp_itemsize */
 	(destructor)PyAgent_dealloc, /* tp_dealloc */
@@ -232,12 +235,12 @@ static PyMethodDef module_functions[] = {
 // This function is called to initialize the module.
 
 PyMODINIT_FUNC
-initlibpyQClassify(void)
+initpyQClassify(void)
 {
 	PyObject* module;
 
 	// Create the module
-	module = Py_InitModule3("libpyQClassify", module_functions, "Python wrapper around QClassify library.");
+	module = Py_InitModule3("pyQClassify", module_functions, "Python wrapper around QClassify library.");
 	if (module == NULL)
 		return;
 
@@ -249,10 +252,10 @@ initlibpyQClassify(void)
 
 	// Add the type to the module.
 	Py_INCREF(&PyAgentType);
-	PyModule_AddObject(module, "Agent", (PyObject*)&PyAgentType);
+	PyModule_AddObject(module, "QClassifyAgent", (PyObject*)&PyAgentType);
 
 	// Add exception to the module.
-	PyExc_QClassifyError = PyErr_NewException((char *)"libpyQClassify.QClassifyError", NULL, NULL);
+	PyExc_QClassifyError = PyErr_NewException((char *)"pyQClassify.QClassifyError", NULL, NULL);
 	Py_INCREF(PyExc_QClassifyError);
 	PyModule_AddObject(module, "QClassifyError", PyExc_QClassifyError);
 }

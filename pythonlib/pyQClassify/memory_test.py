@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from pyQClassify.libpyQClassify import Agent
+from pyQClassify import QClassifyAgent
 import gc
 import os
 
@@ -12,11 +12,11 @@ def get_mem():
 
 
 def main():
-    config_file = '/home/sites/health2.mail.ru/var/colorizer/colorizer.xml'
+    config_file = 'data/config.xml'
     text = open('data/text').read().decode('utf8')
 
     for i in xrange(10 ** 5):
-        colorizer = Agent(config_file)
+        colorizer = QClassifyAgent(config_file)
         colorizer.markup(text)
 
         gc.collect()
