@@ -53,5 +53,6 @@ tests/unit/config/config_unit_test
 tests/unit/utils/utils_unit_test
 tests/unit/qclassify/qclassify_unit_test
 
-#python
+# python
 pythonlib/pyQClassify/build
+*.pyc
