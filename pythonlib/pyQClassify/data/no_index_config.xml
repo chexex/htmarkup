@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Config>
+
+<QueryQualifier>
+	<IndexFile>data/non_exists</IndexFile>
+    <MLocked>no</MLocked>
+    <Enabled>yes</Enabled>
+    <SaveOrigins>yes</SaveOrigins>
+    <Quiet>yes</Quiet>
+</QueryQualifier>
+
+<HtmlMarker>
+  <Gap>20</Gap>
+  <Uniq>yes</Uniq>
+  <SortOrder>R</SortOrder>
+  <Limit>7</Limit>
+</HtmlMarker>
+
+<QueryClass_medrubrics>
+    <ReorderingPenalty>0</ReorderingPenalty>
+    <PartialPenalty>1</PartialPenalty>
+    <DiffFormPenalty>0</DiffFormPenalty>
+    <DiffCapsPenalty>0</DiffCapsPenalty>
+    <BaseRank>4</BaseRank>
+	<PhrasesFile>data/medrubrics.txt</PhrasesFile>
+</QueryClass_medrubrics>
+
+<QueryClass_medicaments>
+    <ReorderingPenalty>0</ReorderingPenalty>
+    <PartialPenalty>1</PartialPenalty>
+    <DiffFormPenalty>0</DiffFormPenalty>
+    <DiffCapsPenalty>0</DiffCapsPenalty>
+    <BaseRank>4</BaseRank>
+	<PhrasesFile>data/medicaments.txt</PhrasesFile>
+</QueryClass_medicaments>
+
+</Config>
