@@ -6,7 +6,7 @@ PROJECT_ROOT = '../../'
 
 setup(
     name='pyQClassify',
-    version='1.4.2',
+    version='1.5.0',
     description='Python wrapper for QClassify library',
     author='Andrey Babak',
     author_email='a.babak@corp.mail.ru',
