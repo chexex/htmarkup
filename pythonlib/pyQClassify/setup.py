@@ -16,7 +16,7 @@ setup(
         Extension(
             'pyQClassify',
             [
-                'src/pyQClassify.cpp'
+                'pyQClassify.cpp'
             ],
             library_dirs=[
                 '/usr/local/lemmatizer/Bin',
