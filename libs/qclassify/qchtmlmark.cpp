@@ -88,30 +88,30 @@ class QCHtmlMarkerImpl
     
   public:
     QCHtmlMarkerImpl();
-    unsigned markup(const string &text, string &os, const QCHtmlMarker::MarkupSettings &st);
+    unsigned markup(const string &text, string &os, const QCHtmlMarker::MarkupSettings &st, const string &url_to_exclude);
     void loadSettings(const XmlConfig *pcfg);
     QCHtmlMarker::MarkupSettings m_cfgSettings;
-    
+
     static inline QCHtmlMarker::sort_order_t parseOrder(const char *order);
-    
+
   private:
     inline html_tag_t html_tag_to_id(const char *tag);
     html_tag_t extract_tag(const char *p, unsigned n, bool &closer);
     void html_getwords(const string &text, const QCHtmlMarker::MarkupSettings &st, vector<wordentry_t> *words);
-    
+
     inline void SpecEncodeString(const char *orig_phrase, std::string &out);
-    bool BuildPhraseURL(const struct match_info &pmi, 
-                        const char *html, 
+    bool BuildPhraseURL(const struct match_info &pmi,
+                        const char *html,
                         string &buf);
-    
-    void select_phrases(const vector<match_info_t> *vmatched, 
-                        vector<match_info_t> *vselected, 
+
+    void select_phrases(const vector<match_info_t> *vmatched,
+                        vector<match_info_t> *vselected,
                         const QCHtmlMarker::MarkupSettings &st);
-    
+
     void apply_grasps(vector<match_info_t> *vm);
     void matches_reorder_byrank(vector<match_info_t> &vm, bool ascend);
     void matches_reorder_byfreq(vector<match_info_t> &vm, bool ascend);
-    
+
     friend class QCHtmlMarker;
 };
 
@@ -125,33 +125,33 @@ inline QCHtmlMarker::sort_order_t QCHtmlMarkerImpl::parseOrder(const char *order
     case 'f': return QCHtmlMarker::MARKUP_ORDER_FREQ_ASC;
     case 'F': return QCHtmlMarker::MARKUP_ORDER_FREQ_DESC;
   }
-  
+
   throw std::runtime_error("Unknown sort order value");
 }
 
 //---------------------------------------------------------------------------------
 /// @brief load settings from config file
 /// @param pcfg config pointer
-void QCHtmlMarkerImpl::loadSettings(const XmlConfig *pcfg) 
+void QCHtmlMarkerImpl::loadSettings(const XmlConfig *pcfg)
 {
   const QCIndexReader &qci = m_psrch->getQCIndex();
   unsigned n = qci.amount();
-  
+
   for (unsigned i = 0; i < n; i++) {
     string tag = QueryClassifierHelper::QCname2XMLtag(qci.getName(i));
     m_classConfigs.insert(make_pair<unsigned, ClsMarkupConfig>(i, ClsMarkupConfig(*pcfg, tag)));
   }
-  
+
   QCHtmlMarker::MarkupSettings def;
   static const char *sec = (const char *)"HtmlMarker";
-  
+
   m_cfgSettings.range = (unsigned)pcfg->GetInt(sec, "MaxPhraseSize", def.range);
   m_cfgSettings.gap   = (unsigned)pcfg->GetInt(sec, "Gap", def.gap);
   m_cfgSettings.nmax  = (unsigned)pcfg->GetInt(sec, "Limit", def.nmax);
   m_cfgSettings.bSkipFirstWord = pcfg->GetBool(sec, "SkipFirstWord", def.bSkipFirstWord);
   m_cfgSettings.bUniq          = pcfg->GetBool(sec, "Uniq", def.bUniq);
   m_cfgSettings.bUseUdataAsFormat = pcfg->GetBool(sec, "UseUdataAsFormat", def.bUseUdataAsFormat);
-  
+
   const char *order = pcfg->GetStr(sec, "SortOrder");
   m_cfgSettings.order = (order) ? parseOrder(order): def.order;
 }
@@ -171,19 +171,19 @@ static bool compar_matches_freq_desc(mi_t inf1, mi_t inf2) { return (inf1.freq >
 /// @brief Main function - markup text
 /// @return amount of marked blocks
 //-----------------------------------------------------------------------------------
-unsigned QCHtmlMarkerImpl::markup(const string &text, string &os, const QCHtmlMarker::MarkupSettings &st)
+unsigned QCHtmlMarkerImpl::markup(const string &text, string &os, const QCHtmlMarker::MarkupSettings &st, const string &url_to_exclude)
 {
   if (!m_psrch) {
     os = text;
     return 0;
   }
-    
+
   PhraseSearcher::res_cls_num_t cres;
   vector<wordentry_t>  words;
   vector<match_info_t> vmatched, vselected;
-  
-  const char *html = const_cast<const char *>(text.data()); 
-  size_t size = text.size();  
+
+  const char *html = const_cast<const char *>(text.data());
+  size_t size = text.size();
 
   html_getwords(text, st, &words);
 
@@ -193,13 +193,13 @@ unsigned QCHtmlMarkerImpl::markup(const string &text, string &os, const QCHtmlMa
   wordentry_t *curw, *endw, *pw;
 
   for (range = st.range; range > 0; range--)
-    for (i=0, maxi = n - range; i <= maxi; i++) 
+    for (i=0, maxi = n - range; i <= maxi; i++)
     {
       curw = &words[i];
-  
-      if ((int)curw->tag_dist < range) 
+
+      if ((int)curw->tag_dist < range)
         continue;
-  
+
       endw = curw + range - 1;
       // construct string from words
       /// TODO: replace by ...
@@ -209,52 +209,52 @@ unsigned QCHtmlMarkerImpl::markup(const string &text, string &os, const QCHtmlMa
         if (pw != endw)
           s += " ";
       }
-      
+
       unsigned n = m_psrch->searchPhrase(s, cres);
       if (m_bDebug)
         printf("=== CLS: \"%s\": %u\n", s.c_str(), n);
-      
+
       if (n)  {
         // remember best of matched
         PhraseSearcher::res_cls_num_t::iterator cit = PhraseSearcher::selectBest(cres);
         mi.rank = cit->second.rank;
         mi.phrase_id = cit->second.phrase_id;
         mi.clsid     = cit->first;
-        
+
         mi.offset   = curw->offset;
         mi.len      = endw->offset + endw->len - curw->offset;
         mi.first_id = i;
         mi.nwords = range;
         mi.first  = curw;
         mi.last   = endw;
-  
+
         vmatched.push_back(mi);
       }
     }
-   
+
     // Preorder matched phrases if need
     // (default is no ordering - i.e. bigger phrases from left to right)
     switch(st.order) {
       case QCHtmlMarker::MARKUP_ORDER_NATIVE:
         break;
-        
+
       case QCHtmlMarker::MARKUP_ORDER_RANK_ASC:
       case QCHtmlMarker::MARKUP_ORDER_RANK_DESC:
         matches_reorder_byrank(vmatched, st.order == QCHtmlMarker::MARKUP_ORDER_RANK_ASC);
         break;
-      
+
       case QCHtmlMarker::MARKUP_ORDER_FREQ_ASC:
       case QCHtmlMarker::MARKUP_ORDER_FREQ_DESC:
         matches_reorder_byfreq(vmatched, st.order == QCHtmlMarker::MARKUP_ORDER_FREQ_ASC);
-        break;  
+        break;
     }
-    
+
     // now we have ALL phrases in vmatched. Theese phrases are self-ordered
     // by phrase lenght from beggining of text to it's end. So, now we should
     // select only non-overlapped phrases with some restrictions from <args>.
     select_phrases(&vmatched, &vselected, st);
     apply_grasps(&vselected);
-    
+
     sort(vselected.begin(), vselected.end(), compar_matches_offset);
     n = vselected.size();
     assert(st.nmax == 0 || (unsigned)n <= st.nmax);
@@ -277,7 +277,7 @@ unsigned QCHtmlMarkerImpl::markup(const string &text, string &os, const QCHtmlMa
           // put text unchanged
           os.append(html + it->offset, it->len);
         }
-            
+
         bc = it->offset + it->len;
       }
 
@@ -302,7 +302,7 @@ void QCHtmlMarkerImpl::apply_grasps(vector<match_info_t> *vm)
 {
   vector<match_info_t>::iterator it;
   int grasp_left, grasp_right;
-    
+
   for (it = vm->begin(); it != vm->end(); it++) {
     grasp_left  = (*it).first->grasp_left;
     grasp_right = (*it).last->grasp_right;
@@ -320,10 +320,10 @@ void QCHtmlMarkerImpl::apply_grasps(vector<match_info_t> *vm)
 /// @param vmatched  - all matched phrases
 /// @param vselected - [out] selected phrases
 //-----------------------------------------------------------------------------------
-void QCHtmlMarkerImpl::select_phrases(const vector<match_info_t> *vmatched, 
-                   vector<match_info_t> *vselected, 
+void QCHtmlMarkerImpl::select_phrases(const vector<match_info_t> *vmatched,
+                   vector<match_info_t> *vselected,
                    const QCHtmlMarker::MarkupSettings &st)
-{   
+{
   vector<match_info_t>::const_iterator it;
   set<int> begs, ends;
   int l, r, first_id, last_id;
@@ -332,9 +332,9 @@ void QCHtmlMarkerImpl::select_phrases(const vector<match_info_t> *vmatched,
   bool already_marked;
   set<unsigned> phrases_tomark;
 
-  for (it = vmatched->begin(); 
-       it != vmatched->end() && (!st.nmax || vselected->size() < st.nmax); 
-       it++) 
+  for (it = vmatched->begin();
+       it != vmatched->end() && (!st.nmax || vselected->size() < st.nmax);
+       it++)
   {
     if (st.bUniq && phrases_tomark.count(it->phrase_id) != 0)
       continue;
@@ -342,7 +342,7 @@ void QCHtmlMarkerImpl::select_phrases(const vector<match_info_t> *vmatched,
     first_id = (*it).first_id;
     last_id = first_id + (*it).nwords - 1;
     wel = (*it).last;
-       
+
     // verify that phrases doesn't overlapped
     already_marked = false;
     for (wef = (*it).first; wef <= wel; wef++) {
@@ -362,7 +362,7 @@ void QCHtmlMarkerImpl::select_phrases(const vector<match_info_t> *vmatched,
       if (its == ends.end()) {
         // no elements >= first_id, so get biggest value
         if (!ends.empty())
-          l = (*ends.rbegin()); 
+          l = (*ends.rbegin());
       } else {
         for(;;) {
           if ((*its) <= first_id) {
@@ -376,17 +376,17 @@ void QCHtmlMarkerImpl::select_phrases(const vector<match_info_t> *vmatched,
       }
 
       its = begs.upper_bound(last_id);
-      if (its != begs.end()) 
+      if (its != begs.end())
         r = *its;
     }
 
-    if ((l == -1 || first_id - l > (int)st.gap) && 
+    if ((l == -1 || first_id - l > (int)st.gap) &&
          (r == -1 || r - last_id  > (int)st.gap))
     {
       // phrase satisfy conditions, so insert.
-      for (wef = (*it).first; wef <= wel; wef++) 
+      for (wef = (*it).first; wef <= wel; wef++)
         wef->marked = 1;
-            
+
       if (st.gap) {
         ends.insert(last_id);
         begs.insert(first_id);
@@ -394,7 +394,7 @@ void QCHtmlMarkerImpl::select_phrases(const vector<match_info_t> *vmatched,
 
       if (st.bUniq)
         phrases_tomark.insert(it->phrase_id);
-            
+
       vselected->push_back(*it);
     }
   }
@@ -410,7 +410,7 @@ void QCHtmlMarkerImpl::matches_reorder_byfreq(vector<match_info_t> &vm, bool asc
   map<int, int> phrases_freq; /* phrase ID => ntimes */
   map<int, int>::iterator mit;
   vector<match_info_t>::iterator it;
-    
+
   for (it = vm.begin(); it != vm.end(); it++) {
     mit = phrases_freq.find((*it).phrase_id);
     if (mit == phrases_freq.end())
@@ -418,7 +418,7 @@ void QCHtmlMarkerImpl::matches_reorder_byfreq(vector<match_info_t> &vm, bool asc
     else
       mit->second++;
   }
-    
+
   for (it = vm.begin(); it != vm.end(); it++) {
     mit = phrases_freq.find((*it).phrase_id);
     assert(mit != phrases_freq.end());
@@ -455,14 +455,14 @@ inline void QCHtmlMarkerImpl::SpecEncodeString(const char *orig_phrase, std::str
 /// @param pmi - [in] matching info
 /// @param buf - [out] resulting buffer
 //-----------------------------------------------------------------------------------
-bool QCHtmlMarkerImpl::BuildPhraseURL(const struct match_info &pmi, 
-                    const char *html, 
-                    string &buf) 
+bool QCHtmlMarkerImpl::BuildPhraseURL(const struct match_info &pmi,
+                    const char *html,
+                    string &buf)
 {
   buf.clear();
-  
+
   static const char *markup_fmt_default = (const char *)"<a class=\"gomail_search\" target=\"_blank\" href=\"http://go.mail.ru/search?q=%O\">%P</a>&nbsp;<img src=\"http://img.mail.ru/r/search_icon.gif\" width=\"13\" height=\"13\" alt=\"\" />";
-  
+
   const char *udata = m_psrch->getUserData(pmi.phrase_id);
   const char *orig_phrase = m_psrch->getOriginPhrase(pmi.phrase_id);
 
@@ -470,16 +470,16 @@ bool QCHtmlMarkerImpl::BuildPhraseURL(const struct match_info &pmi,
   const ClsMarkupConfig *pccfg = (it == m_classConfigs.end()) ? NULL : &it->second;
   bool useUdataAsFormat = !pccfg || pccfg->bUseUdataAsFormat;
   const char *markup_fmt;
-  
-  if (useUdataAsFormat && udata) 
+
+  if (useUdataAsFormat && udata)
     markup_fmt = udata;
   else {
     markup_fmt = (pccfg && !pccfg->marker.empty()) ? pccfg->marker.c_str() : markup_fmt_default;
   }
-  
-  for (const char *pfmt = markup_fmt; *pfmt != 0; pfmt++) 
+
+  for (const char *pfmt = markup_fmt; *pfmt != 0; pfmt++)
   {
-    if (*pfmt == '%') 
+    if (*pfmt == '%')
     {
       char esc_symbol = *(pfmt + 1);
       switch(esc_symbol)
@@ -488,56 +488,56 @@ bool QCHtmlMarkerImpl::BuildPhraseURL(const struct match_info &pmi,
           if (!orig_phrase) return false;
           buf += orig_phrase;
           break;
-          
+
         case 'S':
         {
           if (!orig_phrase) return false;
-          
+
           std::string escaped_orig;
           gogo::str_escape( orig_phrase, escaped_orig );
           buf.append( escaped_orig );
           break;
         }
-          
+
         case 'U':
           if (!udata || markup_fmt == udata /* prevent recursion */) return false;
           buf += udata;
           break;
-          
+
         case 'M': {
           if (!orig_phrase) return false;
-          
+
           string e;
           SpecEncodeString(orig_phrase, e);
           buf += e;
           }
           break;
-          
+
         case 'P':
           buf.append(html + pmi.offset, pmi.len);
           break;
-          
+
         case 'Q':
         {
           std::string escaped_match;
-          
+
           gogo::str_escape( html + pmi.offset, escaped_match, pmi.len );
           buf.append( escaped_match );
           break;
         }
-        
+
         default:
           buf += '%';
           buf += esc_symbol;
       }
-      
+
       pfmt++;
       continue;
     }
-    
+
     buf += *pfmt;
   }
-  
+
   return true;
 }
 
@@ -553,10 +553,10 @@ inline html_tag_t QCHtmlMarkerImpl::html_tag_to_id(const char *tag)
     struct tag_match {
       char *tag;
       html_tag_t id;
-    } matches[] = { 
-      {(char*)"html", TAG_HTML}, 
-      {(char*)"body", TAG_BODY}, 
-      {(char*)"a",    TAG_A   }, 
+    } matches[] = {
+      {(char*)"html", TAG_HTML},
+      {(char*)"body", TAG_BODY},
+      {(char*)"a",    TAG_A   },
     };
 
     for (unsigned i = 0; i < sizeof(matches) / sizeof(matches[0]); i++)
@@ -580,7 +580,7 @@ html_tag_t QCHtmlMarkerImpl::extract_tag(const char *p, unsigned n, bool &closer
 {
   static char *tag_symbols = (char *)"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   char tag[8];
-    
+
   if (*p != '<')
     return TAG_UNKNOWN;
   p++; n--;
@@ -599,7 +599,7 @@ html_tag_t QCHtmlMarkerImpl::extract_tag(const char *p, unsigned n, bool &closer
 
     strncpy(tag, p, n); tag[n] = '\0';
     tag[ strspn(tag, tag_symbols) ] = '\0';
-    
+
     return html_tag_to_id(tag);
 }
 
@@ -613,7 +613,7 @@ html_tag_t QCHtmlMarkerImpl::extract_tag(const char *p, unsigned n, bool &closer
 void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::MarkupSettings &st, vector<wordentry_t> *words)
 {
   typedef enum {STATE_INTEXT, STATE_INTAG} STATES;
-  const char *html = const_cast<const char *>(text.data()); 
+  const char *html = const_cast<const char *>(text.data());
   size_t size = text.size();
 
   STATES state = STATE_INTEXT;
@@ -687,7 +687,7 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
   {
     char c = *p;
     step = 1;
-            
+
     if (c == '<')
       lastopen = p;
 
@@ -695,13 +695,13 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
       case STATE_INTEXT:
         splitter = (strchr(wsplit_symbols, c) != NULL || c == '\0');
         spacer   = (c == ' ' || c == '\t' || c == '\r' || c == '\n'); // TODO: utf8_isspace
-                       
+
         if (c == '&') {
           /* check for special HTML sequences (escapes) */
           int rest = size - offset;
           struct escape *pe;
 
-          for (pe = &escapes[0]; pe->esc; pe++) 
+          for (pe = &escapes[0]; pe->esc; pe++)
             if (rest >= pe->len && !strncmp(p, pe->esc, pe->len)) {
             switch(pe->type) {
               case ESC_TYPE_SPACER:
@@ -728,7 +728,7 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
         }
         if (c == '<' || spacer || splitter) {
           SAVE_WORD;
-                    
+
           if (c == '<' || splitter)
           {
             if (weds.size() && weds.back().wt != WTYPE_TAG) {
@@ -736,18 +736,18 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
               struct we_draft wed = {offset, 0, 0, 0, WTYPE_TAG};
               weds.push_back(wed);
             }
-                        
+
             if (c == '<')
               state =  STATE_INTAG;
           }
 
           wlen = 0;
-                    
+
           // check for end of sentence - mark
-          if (c == '.' || c == '?' || c == '!' || c == ';') 
+          if (c == '.' || c == '?' || c == '!' || c == ';')
             skip_word = st.bSkipFirstWord;
         }
-        else 
+        else
           wlen++;
         break;
 
@@ -755,7 +755,7 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
         if (c == '>') {
           bool closer;
           html_tag_t tag;
-                    
+
           tag = extract_tag(lastopen, p - lastopen, closer);
           switch(tag) {
             case TAG_HTML:
@@ -772,7 +772,7 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
             default:
               ;
           }
-                    
+
           state = STATE_INTEXT;
           skip_word = st.bSkipFirstWord;
           quote_open_beg = quote_close_end = -1;
@@ -781,7 +781,7 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
   } /* for p ... */
 
   // save last word
-  if (!skip_word) 
+  if (!skip_word)
     SAVE_WORD;
 
   vector<struct we_draft>::const_iterator it;
@@ -803,7 +803,7 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
   deque<wordentry_t> wq;
 
   unsigned dist = 0;
-  for (int i = (int)weds.size() - 1; i >= 0; i--) 
+  for (int i = (int)weds.size() - 1; i >= 0; i--)
   {
     const struct we_draft &wer = weds[i];
     if (wer.wt == WTYPE_TAG)
@@ -822,7 +822,7 @@ void QCHtmlMarkerImpl::html_getwords(const string &text, const QCHtmlMarker::Mar
       wq.push_front(we);
     }
   }
-   
+
   // now write result in direct sequence
   deque<wordentry_t>::const_iterator dqi;
   for (dqi = wq.begin(); dqi != wq.end(); dqi++) {
@@ -850,27 +850,43 @@ void QCHtmlMarker::setPhraseSearcher(const PhraseSearcher *psrch) { m_pimpl->m_p
 /// @param text - input text
 /// @param os   - marked up output stream
 /// @param st   - settings
+/// @param url_to_exclude - do not colorize word with such url
 /// @return amount of marked blocks
+//---------------------------------------------------------------------------------
+unsigned QCHtmlMarker::markup(const string &text, string &os, const MarkupSettings &st, const string &url_to_exclude)
+{
+  os.clear();
+  if (text.empty())
+    return 0;
+
+  return m_pimpl->markup(text, os, st, url_to_exclude);
+}
+
+//---------------------------------------------------------------------------------
+/// @brief markup text without url to exclude
 //---------------------------------------------------------------------------------
 unsigned QCHtmlMarker::markup(const string &text, string &os, const MarkupSettings &st)
 {
-  os.clear();
-  if (text.empty())    
-    return 0;
-  
-  return m_pimpl->markup(text, os, st);
+  return markup(text, os, st, "");
 }
 
 //---------------------------------------------------------------------------------
 /// @brief markup text with default settings
-/// @param text - input text
-/// @param os   - marked up output stream
-/// @return amount of marked blocks
+//---------------------------------------------------------------------------------
+unsigned QCHtmlMarker::markup(const string &text, string &os, string &url_to_exclude)
+{
+  MarkupSettings def = getConfigSettings();
+  return markup(text, os, def, url_to_exclude);
+}
+
+
+//---------------------------------------------------------------------------------
+/// @brief markup text with default settings and without url to exclude
 //---------------------------------------------------------------------------------
 unsigned QCHtmlMarker::markup(const string &text, string &os)
 {
   MarkupSettings def = getConfigSettings();
-  return markup(text, os, def);
+  return markup(text, os, def, "");
 }
 
 //---------------------------------------------------------------------------------
@@ -881,15 +897,15 @@ void QCHtmlMarker::setDebug(bool bEnabled) { m_pimpl->m_bDebug = bEnabled; }
 //---------------------------------------------------------------------------------
 /// @brief load settings from config file
 /// @param pcfg config pointer
-void QCHtmlMarker::loadSettings(const XmlConfig *pcfg) { 
-  m_pimpl->loadSettings(pcfg); 
+void QCHtmlMarker::loadSettings(const XmlConfig *pcfg) {
+  m_pimpl->loadSettings(pcfg);
 }
 
 //---------------------------------------------------------------------------------
 /// @brief get default settings parsed from config
 /// @return settings struct
-QCHtmlMarker::MarkupSettings QCHtmlMarker::getConfigSettings() const { 
-  return m_pimpl->m_cfgSettings; 
+QCHtmlMarker::MarkupSettings QCHtmlMarker::getConfigSettings() const {
+  return m_pimpl->m_cfgSettings;
 }
 
 } // namespace gogo

@@ -18,53 +18,62 @@ class QCHtmlMarker
       MARKUP_ORDER_FREQ_ASC,
       MARKUP_ORDER_FREQ_DESC
     } sort_order_t;
-    
+
     struct MarkupSettings {
       sort_order_t order;
       unsigned  range; // search phrase length of [1 .. range]
       unsigned  gap;   // preserve such count of words between selection
       unsigned  nmax;  // limit of phrases to mark
-      
+
       bool bUniq;          // mark only uniq phrases (phrase id)
       bool bSkipFirstWord; // skip first word in sentence
-      
+
       bool bUseUdataAsFormat; // use userdata as format or %U marker
-  
-      MarkupSettings() : order(MARKUP_ORDER_NATIVE), range(5), gap(0), nmax(0), 
+
+      MarkupSettings() : order(MARKUP_ORDER_NATIVE), range(5), gap(0), nmax(0),
                      bUniq(false), bSkipFirstWord(false), bUseUdataAsFormat(true) {}
     };
-    
+
   private:
     QCHtmlMarkerImpl *m_pimpl;
   public:
     QCHtmlMarker(const PhraseSearcher *psrch = NULL);
     ~QCHtmlMarker();
-    
+
     //---------------------------------------------------------------------------------
     /// @brief set phrase searcher
     void setPhraseSearcher(const PhraseSearcher *psrch);
-    
+
     //---------------------------------------------------------------------------------
     /// @brief markup text
-    /// @param text - input text
-    /// @param os   - marked up output stream
-    /// @param st   - settings
+    /// @param text           - input text
+    /// @param os             - marked up output stream
+    /// @param st             - settings
+    /// @param url_to_exclude - do not colorize word with such url
     /// @return amount of marked blocks
-    unsigned markup(const std::string &text, std::string &os, const MarkupSettings &st);
-    
+    unsigned markup(const std::string &text, std::string &os, const MarkupSettings &st, const std::string &url_to_exclude);
+
     //---------------------------------------------------------------------------------
     /// @brief markup text with default settings
+    unsigned markup(const std::string &text, std::string &os, std::string &url_to_exclude);
+
+    //---------------------------------------------------------------------------------
+    /// @brief markup text without url to exclude
+    unsigned markup(const std::string &text, std::string &os, const MarkupSettings &st);
+
+    //---------------------------------------------------------------------------------
+    /// @brief markup text with default settings without url to exclude
     unsigned markup(const std::string &text, std::string &os);
-    
+
     //---------------------------------------------------------------------------------
     /// @brief use it for debugging
     void setDebug(bool bEnabled);
-    
+
     //---------------------------------------------------------------------------------
     /// @brief load settings from config file
     /// @param pcfg config pointer
     void loadSettings(const XmlConfig *pcfg);
-    
+
     //---------------------------------------------------------------------------------
     /// @brief get default settings parsed from config
     /// @return settings struct

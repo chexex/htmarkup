@@ -10,6 +10,20 @@
 #include "qclassify/qclassify_impl.hpp"
 #include "qclassify/htmlmark.hpp"
 
+#define PY_DEFAULT_ARGUMENT_INIT(name, value, ret) \
+    PyObject *name = NULL; \
+    static PyObject *default_##name = NULL; \
+    if (! default_##name) { \
+        default_##name = value; \
+        if (! default_##name) { \
+            PyErr_SetString(PyExc_RuntimeError, "Can not create default value for " #name); \
+            return ret; \
+        } \
+    }
+
+#define PY_DEFAULT_ARGUMENT_SET(name) if (! name) name = default_##name; \
+    Py_INCREF(name)
+
 using namespace gogo;
 
 typedef struct {
@@ -108,38 +122,41 @@ static void PyAgent_dealloc(PyAgent* self) {
 }
 
 
-static PyObject* PyAgent_markup(PyAgent* self, PyObject *args, PyObject *kwds) {
-	if (!self->is_initialized) {
-		PyErr_SetString(PyExc_QClassifyError, "Unable to load PhraseCollectionLoader config");
-		return NULL;
-	}
+static PyObject* PyAgent_markup(PyAgent* self, PyObject *args, PyObject *kwargs) {
+        if (!self->is_initialized) {
+                PyErr_SetString(PyExc_QClassifyError, "Unable to load PhraseCollectionLoader config");
+                return NULL;
+        }
 
-	std::string out;
+        std::string out;
 
-	PyObject* UnicodeInput;
+        PY_DEFAULT_ARGUMENT_INIT(url_to_exclude,  PyUnicode_FromString(""),  NULL);
 
-	static char *kwlist[] = {(char *)"text", NULL};
+        PyObject* UInputText;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "U", kwlist, &UnicodeInput))
-		return NULL;
+        static const char *kwlist[] = {"text", "url_to_exclude", NULL};
 
-	PyObject* UTFInput = PyUnicode_AsEncodedString(UnicodeInput, "UTF-8", NULL);
+        if (!PyArg_ParseTupleAndKeywords(args, kwargs, "U|U", const_cast<char **>(kwlist), &UInputText, &url_to_exclude))
+                return NULL;
+        PY_DEFAULT_ARGUMENT_SET(url_to_exclude);
+        PyObject* UTFInput = PyUnicode_AsEncodedString(UInputText, "UTF-8", NULL);
 
-	char* text= PyString_AsString(UTFInput);
+        char* text = PyString_AsString(UTFInput);
+        char* url_to_exclude_str = PyString_AsString(url_to_exclude);
+        QCHtmlMarker::MarkupSettings st = self->m_marker->getConfigSettings();
+        try {
+                self->m_marker->markup((std::string)text, out, st, (std::string)url_to_exclude_str);
+        }
+        catch(...) {
+                PyErr_SetString(PyExc_QClassifyError, "Unable to markup text");
+                Py_DECREF(UTFInput);
+                Py_DECREF(url_to_exclude);
+                return NULL;
+        }
 
-	QCHtmlMarker::MarkupSettings st = self->m_marker->getConfigSettings();
-	try {
-		self->m_marker->markup((std::string)text, out, st);
-	}
-	catch(...) {
-		PyErr_SetString(PyExc_QClassifyError, "Unable to markup text");
-		Py_DECREF(UTFInput);
-		return NULL;
-	}
-
-	Py_DECREF(UTFInput);
-	return PyUnicode_FromString(out.c_str());
-
+        Py_DECREF(UTFInput);
+        Py_DECREF(url_to_exclude);
+        return PyUnicode_FromString(out.c_str());
 }
 
 static PyObject* PyAgent_index2file(PyAgent* self) {
